@@ -3,3 +3,4 @@ CSCI.320 team project 21
 
 ## Contributors
 * Daniel Chapin (dsc4984)
+* Rhythm KC
