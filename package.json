@@ -1,0 +1,22 @@
+{
+  "name": "pdm-team21-project",
+  "version": "1.0.0",
+  "description": "CSCI.320 team project 21",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dsc4984/PDM-Team21-Project.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dsc4984/PDM-Team21-Project/issues"
+  },
+  "homepage": "https://github.com/dsc4984/PDM-Team21-Project#readme",
+  "dependencies": {
+    "express": "^4.18.1"
+  }
+}
