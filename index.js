@@ -2,6 +2,8 @@ var express = require('express');
 var app = express();
 const port = 3000;
 
+const db = require('./db.js');
+
 // Static hosting from the static folder
 app.use(express.static(`${__dirname}/static/`));
 
@@ -14,3 +16,16 @@ app.get('*', (req, res) => {
 app.listen(port, () => {
   console.log(`Program listening on port ${port}`);
 });
+
+(async () => {
+    let err = await db.connect();
+    if (err) {
+        console.log('Connection error: ', err);
+    } else {
+        let query = `select * from test`;
+        let res = await db.query(query);
+        console.log(`${query}: `);
+        console.log(res.rows);
+    }
+    db.disconnect();
+})();
