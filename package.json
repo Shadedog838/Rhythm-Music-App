@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/dsc4984/PDM-Team21-Project#readme",
   "dependencies": {
-    "express": "^4.18.1"
+    "dotenv": "^16.0.3",
+    "express": "^4.18.1",
+    "pg": "^8.8.0"
   }
 }
