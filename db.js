@@ -1,3 +1,34 @@
+// API for connecting to a db with ssh tunneling
+// Authors: Daniel Chapin (dsc4984)
+//
+// Database information is taken from .env
+// You must define:
+//      DB_USERNAME
+//      DB_PASSWORD
+//      DB_NAME
+//      DB_HOST
+// You may optionaly define:
+//      DB_PORT         (default 5432)
+//      SSH_USERNAME    (default DB_USERNAME)
+//      SSH_PASSWORD    (default DB_PASSWORD)
+//      SSH_HOST        (default DB_HOST)
+//      SSH_PORT        (default 22)
+//
+// Example usage:
+// const db = require('./db.js');
+// (async () => {
+//     let err = await db.connect();
+//     if (err) {
+//         console.log('Connection error: ', err);
+//     } else {
+//         let query = `select * from test`;
+//         let res = await db.query(query);
+//         console.log(`${query}: `);
+//         console.log(res.rows);
+//     }
+//     db.disconnect();
+// })();
+
 // dotenv for getting credentials
 require('dotenv').config();
 
@@ -11,27 +42,35 @@ const { Client } = require('pg');
 const db_username = process.env.DB_USERNAME;
 const db_password = process.env.DB_PASSWORD;
 const db_name = process.env.DB_NAME;
-const host = 'starbug.cs.rit.edu';
-const port = 5432;
+const db_host = process.env.DB_HOST;
+let db_port = process.env.DB_PORT;
+if (!db_port) db_port = 5432;
 
 let ssh_username = process.env.SSH_USERNAME;
 let ssh_password = process.env.SSH_USERNAME;
+let ssh_host = process.env.SSH_HOST;
+let ssh_port = process.env.SSH_PORT;
 if (!ssh_username) ssh_username = db_username;
 if (!ssh_password) ssh_password = db_password;
+if (!ssh_host) ssh_host = db_host;
+if (!ssh_port) ssh_port = 22;
 
 // SSH tunnel object
 let ssh_tunnel;
+
+// Postgres Client
+let client;
 
 // Connects to the database configured in db.pool
 // @returns     err     if something went wrong connecting
 const connect = async () => {
     const tunnel_config = {
-        host: host,
+        host: ssh_host,
         username: ssh_username,
         password: ssh_password,
         port: 22,
-        dstPort: port,
-        localPort: port,
+        dstPort: db_port,
+        localPort: db_port,
     };
 
     tunnel(
@@ -39,32 +78,14 @@ const connect = async () => {
         async (err, server) => {
             if (err) {
                 console.log('SSH tunnel connection error!');
-                console.log(err);
+                return err;
             }
             console.log('SSH tunnel established.');
             ssh_tunnel = server;
         }
     );
-}
 
-// Closes the ssh connection to the server.
-const disconnect = async () => {
-    if (!ssh_tunnel) {
-        console.log('No SSH tunnel to close!');
-        return;
-    }
-
-    console.log('Closing SSH connection');
-    ssh_tunnel.close();
-}
-
-// Queries the db with the given query.
-// @param       query   The SQL statement to execute (string)
-// @returns     (err, res)
-//              err if something went wrong
-//              res the result of the query
-const query = async (query) => {
-    const client = new Client({
+    client = new Client({
         connectionString: `postgres://${db_username}:${db_password}@127.0.0.1/${db_name}`
     });
 
@@ -75,11 +96,28 @@ const query = async (query) => {
 
         console.log('An error occured querying the database.');
         console.log(err);
-        return undefined;
+        return err;
     });
-    const res = await client.query(query);
+}
+
+// Closes the ssh connection to the server.
+const disconnect = async () => {
+    if (!ssh_tunnel) {
+        console.log('No SSH tunnel to close!');
+        return;
+    }
+
     await client.end();
-    return res;
+
+    console.log('Closing SSH connection');
+    await ssh_tunnel.close();
+}
+
+// Queries the db with the given query.
+// @param       query   The SQL statement to execute (string)
+// @return      The result of the query
+const query = async (query) => {
+    return await client.query(query);
 }
 
 module.exports = { query, connect, disconnect };
