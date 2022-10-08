@@ -17,8 +17,6 @@ const { endpoints } = require('./endpoints.js');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Static hosting from the static folder
-app.use(express.static(`${__dirname}/static/`));
 
 // ================ //
 // === HTTP GET === //
