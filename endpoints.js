@@ -1,5 +1,6 @@
 // Endpoint templates are stored here and POST endpoints are automatically
 // generated on program launch.
+// Authors: Daniel Chapin (dsc4984)
 //
 // Format:
 // const endpoints = [
