@@ -43,8 +43,6 @@ app.get('*', (req, res) => {
 
         app.post(path, (req, res) => {
             const user_params = req.body;
-            console.log(req);
-            console.log('params', user_params);
             let subs = Object.assign({}, params);
             subs = Object.assign(subs, user_params);
             let realized_query = query.slice();
