@@ -4,10 +4,10 @@
 // Express for hosting
 var express = require('express');
 var app = express();
-const port = 3000;
+const port = 5000;
 
 // Connect to database
-const db = require('./db.js');
+const db = require('./db');
 db.connect();
 
 // Generated endpoints:

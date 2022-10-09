@@ -37,7 +37,7 @@ require('dotenv').config();
 const tunnel = require('tunnel-ssh');
 
 // pg for db connections
-const { Client } = require('pg');
+const Pool = require('pg').Pool;
 
 // information from .env
 const db_username = process.env.DB_USERNAME;
@@ -62,7 +62,7 @@ if (!ssh_port) ssh_port = 22;
 let ssh_tunnel;
 
 // Postgres Client
-let client;
+let pool;
 
 // Connects to the database configured in db.pool
 // @returns     err     if something went wrong connecting
@@ -88,19 +88,13 @@ const connect = async () => {
         }
     );
 
-    client = new Client({
+    pool = new Pool({
         connectionString: `postgres://${db_username}:${db_password}@127.0.0.1:${db_port_local}/${db_name}`
     });
 
-    await client.connect(err => {
-        if (!err) {
-            return;
-        }
-
-        console.log('An error occured querying the database.');
-        console.log(err);
-        return err;
-    });
+    await pool.connect()
+    const res = await pool.query('SELECT * FROM test')
+    console.log(res);
 }
 
 // Closes the ssh connection to the server.
@@ -110,7 +104,7 @@ const disconnect = async () => {
         return;
     }
 
-    await client.end();
+    await pool.end();
 
     console.log('Closing SSH connection');
     await ssh_tunnel.close();
@@ -120,7 +114,7 @@ const disconnect = async () => {
 // @param       query   The SQL statement to execute (string)
 // @return      The result of the query
 const query = async (query) => {
-    return await client.query(query);
+    return await pool.query(query);
 }
 
 module.exports = { query, connect, disconnect };
