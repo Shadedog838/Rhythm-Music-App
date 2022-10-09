@@ -13,6 +13,7 @@
 //      SSH_PASSWORD    (default DB_PASSWORD)
 //      SSH_HOST        (default DB_HOST)
 //      SSH_PORT        (default 22)
+//      DB_PORT_LOCAL   (default DB_PORT)
 //
 // Example usage:
 // const db = require('./db.js');
@@ -45,6 +46,8 @@ const db_name = process.env.DB_NAME;
 const db_host = process.env.DB_HOST;
 let db_port = process.env.DB_PORT;
 if (!db_port) db_port = 5432;
+let db_port_local = process.env.DB_PORT_LOCAL;
+if (!db_port_local) db_port_local = db_port;
 
 let ssh_username = process.env.SSH_USERNAME;
 let ssh_password = process.env.SSH_USERNAME;
@@ -70,7 +73,7 @@ const connect = async () => {
         password: ssh_password,
         port: 22,
         dstPort: db_port,
-        localPort: db_port,
+        localPort: db_port_local,
     };
 
     tunnel(
@@ -86,7 +89,7 @@ const connect = async () => {
     );
 
     client = new Client({
-        connectionString: `postgres://${db_username}:${db_password}@127.0.0.1/${db_name}`
+        connectionString: `postgres://${db_username}:${db_password}@127.0.0.1:${db_port_local}/${db_name}`
     });
 
     await client.connect(err => {
