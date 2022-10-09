@@ -71,24 +71,3 @@ app.get('*', (req, res) => {
 app.listen(port, () => {
     console.log(`Program listening on port ${port}`);
 });
-
-// Command line input
-process.stdin.on('data', async (data) => {
-    let input = data.toString().trim();
-    db.query(input)
-    .then((res) => {
-        const rows = res.rows;
-        for (row in rows) {
-            console.log(rows[row]);
-        }
-
-        if (rows.length == 0) {
-            console.log('{ Empty Response }');
-        }
-    })
-    .catch((err) => {
-        console.log(err);
-    });
-});
-
-console.log('Simply enter SQL queries to execute.');
