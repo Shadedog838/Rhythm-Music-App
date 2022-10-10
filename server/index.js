@@ -1,71 +1,75 @@
-// Backend entry point
-// Authors: Daniel Chapin (dsc4948)
-
 // Express for hosting
-var express = require('express');
-var app = express();
+const express = require('express');
+const app = express();
+const cors = require("cors")
 const port = 5000;
 
-// Connect to database
-const db = require('./db');
-db.connect();
-
-// Generated endpoints:
-const { endpoints } = require('./endpoints.js');
-
-// JSON parsing for POST requests
-app.use(express.urlencoded({ extended: true }));
+// middleware
+const pool = require('./db');
 app.use(express.json());
 
+// Generated endpoints:
+// const { endpoints } = require('./endpoints.js');
+
+// JSON parsing for POST requests
+// app.use(express.urlencoded({ extended: true }));
+
+
+// routes
 
 // ================ //
 // === HTTP GET === //
 // ================ //
 
-// 404 page
-app.get('*', (req, res) => {
-    res.send("You've entered an invalid URL (404)");
-});
+// app.get("/test", async (req, res) => {
+//     try {
+//         const allNames = await pool.query("SELECT * FROM test");
+//         res.json(allNames.rows);
+//     } catch (err) {
+//         console.log(err.message);
+//     }
+// });
+
 
 // ================= //
 // === HTTP POST === //
 // ================= //
 
 // Template defined endpoints
-(() => {
-    for (let i in endpoints) {
-        const endpoint = endpoints[i];
-        const path = endpoint.path;
-        const query = endpoint.query;
-        const params = endpoint.params;
+// (() => {
+//     for (let i in endpoints) {
+//         const endpoint = endpoints[i];
+//         const path = endpoint.path;
+//         const query = endpoint.query;
+//         const params = endpoint.params;
 
-        app.post(path, (req, res) => {
-            const user_params = req.body;
-            let subs = Object.assign({}, params);
-            subs = Object.assign(subs, user_params);
-            let realized_query = query.slice();
-            for (let key in subs) {
-                const replacement = subs[key];
-                const target = `\$\{${key}\}`;
-                if (!replacement) {
-                    res.status(409).send(`POST Endpoint ${path} requires parameter ${key}, but it was not specified.`);
-                    return;
-                }
-                realized_query = realized_query.replaceAll(target, replacement);
-            }
+//         app.post(path, (req, res) => {
+//             const user_params = req.body;
+//             let subs = Object.assign({}, params);
+//             subs = Object.assign(subs, user_params);
+//             let realized_query = query.slice();
+//             for (let key in subs) {
+//                 const replacement = subs[key];
+//                 const target = `\$\{${key}\}`;
+//                 if (!replacement) {
+//                     res.status(409).send(`POST Endpoint ${path} requires parameter ${key}, but it was not specified.`);
+//                     return;
+//                 }
+//                 realized_query = realized_query.replaceAll(target, replacement);
+//             }
 
-            db.query(realized_query)
-            .then((data) => {
-                res.status(200).send(data.rows);
-            })
-            .catch((err) => {
-                console.log(`Error occured in POST ${path}`);
-                console.log(err);
-                res.status(500).send(err.toString());
-            });
-        });
-    }
-})();
+//             db.query(realized_query)
+//             .then((data) => {
+//                 res.status(200).send(data.rows);
+//             })
+//             .catch((err) => {
+//                 console.log(`Error occured in POST ${path}`);
+//                 console.log(err);
+//                 res.status(500).send(err.toString());
+//             });
+//         });
+//     }
+// })();
 
 // Start listening on the specified port
 app.listen(port, () => {

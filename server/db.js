@@ -15,20 +15,6 @@
 //      SSH_PORT        (default 22)
 //      DB_PORT_LOCAL   (default DB_PORT)
 //
-// Example usage:
-// const db = require('./db.js');
-// (async () => {
-//     let err = await db.connect();
-//     if (err) {
-//         console.log('Connection error: ', err);
-//     } else {
-//         let query = `select * from test`;
-//         let res = await db.query(query);
-//         console.log(`${query}: `);
-//         console.log(res.rows);
-//     }
-//     db.disconnect();
-// })();
 
 // dotenv for getting credentials
 require('dotenv').config();
@@ -61,9 +47,6 @@ if (!ssh_port) ssh_port = 22;
 // SSH tunnel object
 let ssh_tunnel;
 
-// Postgres Client
-let pool;
-
 // Connects to the database configured in db.pool
 // @returns     err     if something went wrong connecting
 const connect = async () => {
@@ -87,34 +70,30 @@ const connect = async () => {
             ssh_tunnel = server;
         }
     );
-
-    pool = new Pool({
-        connectionString: `postgres://${db_username}:${db_password}@127.0.0.1:${db_port_local}/${db_name}`
-    });
-
-    await pool.connect()
-    const res = await pool.query('SELECT * FROM test')
-    console.log(res);
 }
+
+const pool = new Pool({
+    connectionString: `postgres://${db_username}:${db_password}@127.0.0.1:${db_port_local}/${db_name}`
+});
 
 // Closes the ssh connection to the server.
-const disconnect = async () => {
-    if (!ssh_tunnel) {
-        console.log('No SSH tunnel to close!');
-        return;
-    }
+// const disconnect = async () => {
+//     if (!ssh_tunnel) {
+//         console.log('No SSH tunnel to close!');
+//         return;
+//     }
 
-    await pool.end();
+//     await pool.end();
 
-    console.log('Closing SSH connection');
-    await ssh_tunnel.close();
-}
+//     console.log('Closing SSH connection');
+//     await ssh_tunnel.close();
+// }
 
 // Queries the db with the given query.
 // @param       query   The SQL statement to execute (string)
 // @return      The result of the query
-const query = async (query) => {
-    return await pool.query(query);
-}
-
-module.exports = { query, connect, disconnect };
+// const query = async (query) => {
+//     return await pool.query(query);
+// }
+connect();
+module.exports = pool;
