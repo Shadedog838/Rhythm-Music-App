@@ -5,6 +5,7 @@ import Home from './Components/Pages/Home';
 import { ThemeContext, themes } from './Theme';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import Login from './Components/Pages/Login';
+import Register from './Components/Pages/Register';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
             <Route exact path='/' element={<Start />} />
             <Route exact path='/home' element={<Home />} />
             <Route exact path='/login' element={<Login />} />
+            <Route exact path='/register' element={<Register />} />
           </Routes>
         </Router>
       </>

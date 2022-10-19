@@ -33,7 +33,7 @@ export default function Login() {
           <Form.Group
             className="mx-auto"
             as={Col}
-            md="8"
+            md="4"
             controlId="validationUsername"
           >
             <Form.Label>Username:</Form.Label>
@@ -54,11 +54,11 @@ export default function Login() {
           <Form.Group
             className="mx-auto"
             as={Col}
-            md="8"
+            md="4"
             controlId="validationPassword"
           >
             <Form.Label>Password:</Form.Label>
-            <Form.Control type="text" placeholder="Password" required />
+            <Form.Control type="password" placeholder="Password" required />
             <Form.Control.Feedback type="invalid">
               Please provide a valid password.
             </Form.Control.Feedback>
