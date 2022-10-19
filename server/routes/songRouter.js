@@ -1,5 +1,8 @@
 // Routes for all SONG related operations //
 
+const express = require ("express");
+const router = express.Router();
+const pool = require ("../db")
 
 // Generated endpoints:
 // const { endpoints } = require('./endpoints.js');
@@ -22,6 +25,16 @@
 // });
 
 
+router.get("/song", async (req, res) => {
+    try {
+        const allNames = await pool.query("SELECT title FROM song");
+        res.json(allNames.rows);
+    } catch (err) {
+        console.log(err.message);
+    }
+    });
+
+module.exports = router;
 // ================= //
 // === HTTP POST === //
 // ================= //
