@@ -5,8 +5,8 @@ const cors = require("cors")
 const port = 5000;
 
 
-app.use("./user", require("./routes/user"));
-app.use("./song", require("./routes/song"));
+app.use("/user", require("./routes/userRouter"));
+app.use("/song", require("./routes/songRouter"));
 
 // middleware
 const pool = require('./db');
