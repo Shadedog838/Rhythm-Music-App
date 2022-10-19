@@ -5,7 +5,6 @@ import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import Row from "react-bootstrap/Row";
 import { Link } from "react-router-dom";
-import "./css/Login.scss";
 
 export default function Login() {
   const [validated, setValidated] = useState(false);
