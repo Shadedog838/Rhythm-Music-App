@@ -1,8 +1,8 @@
 // Routes for all SONG related operations //
 
-const express = require ("express");
+const express = require("express");
 const router = express.Router();
-const pool = require ("../db")
+const pool = require("../db")
 
 // Generated endpoints:
 // const { endpoints } = require('./endpoints.js');
@@ -25,14 +25,45 @@ const pool = require ("../db")
 // });
 
 
-router.get("/song", async (req, res) => {
+router.get("/", async (req, res) => {
     try {
-        const allNames = await pool.query("SELECT title FROM song");
+        const allNames = await pool.query(
+        "SELECT s.title, a.name, s.length, count(p.sid) as Times_Played" +
+        " FROM artist as a, artist_song as sa, song as s" +  
+        " Left join plays as p on s.sid = p.sid" + 
+        " WHERE s.sid = sa.sid AND sa.artistid = a.artistid" +
+        " GROUP BY(s.title, a.name, s.length)" + 
+        " ORDER BY  s.title, a.name ASC;");
         res.json(allNames.rows);
     } catch (err) {
         console.log(err.message);
     }
-    });
+});
+
+router.get("/sort", async (req, res) => {
+    try {
+        const { attribute} = req.body;
+        console.log(attribute);
+        const allNames = await pool.query(
+        "SELECT s.title, a.name, s.length, count(p.sid) as Times_Played" +
+        " FROM artist as a, artist_song as sa, song as s" +  
+        " Left join plays as p on s.sid = p.sid" + 
+        " WHERE s.sid = sa.sid AND sa.artistid = a.artistid" +
+        " GROUP BY(s.title, a.name, s.length)" + 
+        " ORDER BY " + attribute
+        );
+        // console.log("SELECT s.title, a.name, s.length, count(p.sid) as Times_Played" +
+        // " FROM artist as a, artist_song as sa, song as s" +  
+        // " Left join plays as p on s.sid = p.sid" + 
+        // " WHERE s.sid = sa.sid AND sa.artistid = a.artistid" +
+        // " GROUP BY(s.title, a.name, s.length)" + 
+        // " ORDER BY $1;",
+        // [attribute]);
+        res.json(allNames.rows);
+    } catch (err) {
+        console.log(err.message);
+    }
+});
 
 module.exports = router;
 // ================= //
