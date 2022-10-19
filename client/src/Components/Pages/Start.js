@@ -18,7 +18,7 @@ export default function Start() {
         <div className="main-row-text">
           <h1>Time To Enjoy Some Music</h1>
           <p>I guaranteed there is a song for you!!</p>
-          <Link to={"/home"} className="btn">
+          <Link to={"/login"} className="btn">
             Start Listening To Your Favaorite Songs
           </Link>
         </div>
