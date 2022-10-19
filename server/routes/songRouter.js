@@ -42,23 +42,16 @@ router.get("/", async (req, res) => {
 
 router.get("/sort", async (req, res) => {
     try {
-        const { attribute} = req.body;
-        console.log(attribute);
+        const { attribute , condition} = req.body;
+        
         const allNames = await pool.query(
         "SELECT s.title, a.name, s.length, count(p.sid) as Times_Played" +
         " FROM artist as a, artist_song as sa, song as s" +  
         " Left join plays as p on s.sid = p.sid" + 
         " WHERE s.sid = sa.sid AND sa.artistid = a.artistid" +
         " GROUP BY(s.title, a.name, s.length)" + 
-        " ORDER BY " + attribute
+        " ORDER BY " + attribute +" " +  condition
         );
-        // console.log("SELECT s.title, a.name, s.length, count(p.sid) as Times_Played" +
-        // " FROM artist as a, artist_song as sa, song as s" +  
-        // " Left join plays as p on s.sid = p.sid" + 
-        // " WHERE s.sid = sa.sid AND sa.artistid = a.artistid" +
-        // " GROUP BY(s.title, a.name, s.length)" + 
-        // " ORDER BY $1;",
-        // [attribute]);
         res.json(allNames.rows);
     } catch (err) {
         console.log(err.message);
