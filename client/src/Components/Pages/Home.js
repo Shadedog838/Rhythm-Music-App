@@ -17,6 +17,7 @@ export default function Home() {
       {/* <div> */}
         {/* <Skeleton animation={"wave"} variant={"rect"} height={"100vh"} /> */}
         <MusicListConatiner />
+        
       {/* </div> */}
     </div>
   );
