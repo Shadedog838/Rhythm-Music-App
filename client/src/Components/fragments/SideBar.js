@@ -4,29 +4,30 @@ import SideBarOptions from "./SideBarOptions";
 import AlbumIcon from "@material-ui/icons/Album";
 import PersonIcon from '@material-ui/icons/Person';
 import HomeIcon from '@material-ui/icons/Home';
+import "../assets/scss/SideBar.scss";
 
 export default function SideBar() {
   const useStyle = useContext(ThemeContext);
   return (
     <aside style={useStyle.component} className={"aside-bar"}>
       <div className="aside-bar-container">
-        <p className={"p1"}>
+        <p className="p1">
           <span>Navigation</span>
         </p>
         <SideBarOptions
-          className={"lib-sub"}
+          className="nav-sub"
           Icon={HomeIcon}
           href={"/home"}
           title={"Home"}
         />
         <SideBarOptions
-          className={"lib-sub"}
+          className="nav-sub"
           Icon={AlbumIcon}
           href={"/home/Albums"}
           title={"Albums"}
         />
         <SideBarOptions
-          className={"lib-sub"}
+          className="nav-sub"
           Icon={PersonIcon}
           href={"/home/Profile"}
           title={"Profile"}

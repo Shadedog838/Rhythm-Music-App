@@ -6,7 +6,7 @@ export default function LogoIcon() {
   return (
     <div className="logo">
       <Link to={"/home"}>
-        <img src={Logo} width={"24px"} alt=""/>
+        <img src={Logo} width={"70px"} alt=""/>
       </Link>
     </div>
   )

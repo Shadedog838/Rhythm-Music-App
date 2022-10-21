@@ -5,10 +5,12 @@ import { ThemeContext } from "../../Theme";
 import MusicListConatiner from "../fragments/MusicListConatiner";
 import TopBar from "../fragments/TopBar";
 import SideBar from "../fragments/SideBar";
+import "../Pages/css/Home.scss";
 
 export default function Home() {
   const [screenSize, setScreenSize] = useState(undefined);
   const [currMusic, setCurrMusic] = useState(null);
+  const [page, setCurrPage] = useState(<MusicListConatiner />);
 
   let pathname = window.location.pathname;
   const useStyle = useContext(ThemeContext);
@@ -20,22 +22,21 @@ export default function Home() {
 
   return (
     <div style={useStyle.component} className="home-conatiner">
-      {
-        !loaded ?
-        <div>
-        <Skeleton animation={"wave"} variant={"rect"} height={"100vh"} />
-      </div>
-      :
-      <>
-        <TopBar />
-        <section className="home-music-container">
-          <div className="sidebar-home">
-            <SideBar />
-          </div>
-        </section>
-      </>
-      }
-
+      {!loaded ? (
+        <div className="home-skeleton">
+          <Skeleton animation={"wave"} variant={"rect"} height={"100vh"} />
+        </div>
+      ) : (
+        <>
+          <TopBar />
+          <section className="home-music-container">
+            <div className="sidebar-home">
+              <SideBar />
+            </div>
+            <div className="main-home">{page}</div>
+          </section>
+        </>
+      )}
     </div>
   );
 }

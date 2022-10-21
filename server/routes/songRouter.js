@@ -31,7 +31,7 @@ router.get("/", async (req, res) => {
             "select s.title, a.name, al.name as album_name, s.length, count(p.sid) as Times_Played" +
             " from artist as a, album as al, genre as g, song as s" +
             " LEFT JOIN plays as p on s.sid = p.sid" +
-            " where s.artistid = a.artistid and s.albumid = al.albumid and s.genreid = g.genreid" +
+            " where s.artistid = a.artistid and s.albumid = al.albumid and s.genre_id = g.genreid" +
             " GROUP BY (s.title, a.name, al.name, s.length)" +
             " ORDER BY s.title, a.name ASC")
         res.json(allNames.rows);
@@ -50,7 +50,7 @@ router.get("/sort", async (req, res) => {
             "select s.title, a.name, al.name as album_name, s.length, count(p.sid) as Times_Played" +
             " from artist as a, album as al, genre as g, song as s" +
             " LEFT JOIN plays as p on s.sid = p.sid" +
-            " where s.artistid = a.artistid and s.albumid = al.albumid and s.genreid = g.genreid" +
+            " where s.artistid = a.artistid and s.albumid = al.albumid and s.genre_id = g.genreid" +
             " GROUP BY (s.title, a.name, al.name, s.length)" +
             " ORDER BY " + attribute + " " + condition
         );

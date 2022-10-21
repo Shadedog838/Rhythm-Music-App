@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import LogoIcon from "./Logo";
 import Button from "react-bootstrap/Button";
+import { useDispatch } from "react-redux";
 import "../assets/scss/TopBar.scss";
 
 const setSeachQuery = (content) => {
@@ -20,7 +21,6 @@ export default function TopBar() {
   const [attribute, setAttribute] = useState("");
   const [condition, setCondition] = useState("");
   const searchRef = useRef();
-
 
   const handleAttribute = (e) => {
     setAttribute = e.target.value;
@@ -37,17 +37,16 @@ export default function TopBar() {
     });
   };
 
+  // const dispatch = useDispatch();
+  const searchLink = useRef();
 
   const useStyle = useContext(ThemeContext);
   return (
     <nav style={useStyle.component}>
-      <div className="div">
       <LogoIcon />
-      </div>
-      <div className="div">
-        <h5>Search By:</h5>
-      </div>
-      <div className="div">
+
+      <p className="item">Search By:</p>
+      <div className="item select">
         <Form.Select aria-label="search-select" onChange={handleAttribute}>
           <option value="s.title">Title</option>
           <option value="a.name">Artist</option>
@@ -55,17 +54,21 @@ export default function TopBar() {
           <option value="g.name">Genre</option>
         </Form.Select>
       </div>
-      <div>
+      <div className="SearchBar">
         <Form onSubmit={handleSearchQuery} className="d-flex">
+          <Link to={"/home/search"} ref={searchLink} />
           <Form.Control
             type="search"
             placeholder="Search"
-            className="me-2"
+            className="search-container"
             aria-label="Search"
             onChange={handleCondition}
           />
           <Button variant="outline-success">Search</Button>
         </Form>
+      </div>
+      <div className="item">
+        <p>You are signed in as "ndvsn"</p>
       </div>
     </nav>
   );
