@@ -2,7 +2,7 @@
 const express = require('express');
 const app = express();
 const cors = require("cors")
-const port = 5000;
+const port = 3000;
 
 
 // middleware
@@ -12,6 +12,7 @@ app.use(cors());
 
 //app.use("/user", require("./routes/userRouter"));
 app.use("/song", require("./routes/songRouter"));
+app.use("/user", require("./routes/userRouter"))
 
 // Start listening on the specified port
 app.listen(port, () => {
