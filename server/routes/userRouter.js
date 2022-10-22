@@ -14,6 +14,7 @@
     * follow user
     * unfollow user
     * play whole playlist
+    * delete playlist
 */
 const express = require("express");
 const router = express.Router();
@@ -263,6 +264,36 @@ router.post("/playlist/play", async (req,res)=> {
         );
         res.json(allNames.rows);
     } catch(err) {
+        console.log(err.message)
+    }
+});
+//delete playlist
+router.delete("/playlist/delete", async (req,res)=> {
+    try{
+        const username = req.body.username;
+        const pid = req.body.pid
+        pool.query("select * from playlist where username =$1 and pid=$2",[username,pid], async (error,value)=>{
+            if(error){
+                console.log(error)
+                res.sendStatus(500)
+                return
+            }
+            if(value.rowCount ==0 || !value){
+                res.sendStatus(401)
+                return
+            }
+            const pp = await pool.query(
+                "DELETE FROM playlist_contains WHERE pid = $1",[pid] 
+            )
+            const allNames = await pool.query(
+                "DELETE FROM playlist WHERE pid = $1",[pid]
+            );
+            res.json(allNames.rows);
+
+        })
+        
+       
+    } catch(err){
         console.log(err.message)
     }
 });
