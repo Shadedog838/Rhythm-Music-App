@@ -126,7 +126,8 @@ router.get("/playlists/:userId", async(req,res)=>{
             res.sendStatus(404)
             return;
         }
-        const playlistqueryString = `Select (pid , name) from playlist where username=$1`
+        const playlistqueryString = `Select p.pid, p.name, count( p.pid = pc.pid ) 
+        from playlist as p, playlist_contains as pc where username=$1 group by  (p.pid) order by p.name ASC `
         pool.query(playlistqueryString,[req.params.userId],(error,listofplaylist)=>{
             if(error){
                 console.log(error)
@@ -137,7 +138,7 @@ router.get("/playlists/:userId", async(req,res)=>{
                 res.sendStatus(404)
                 return
             }
-            res.send(200).json(lisofplaylist.rows)
+            res.status(200).json(listofplaylist.rows)
         })
 
     })
