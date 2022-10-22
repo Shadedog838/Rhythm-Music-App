@@ -15,7 +15,11 @@ import "../assets/scss/MusicListContainer.scss";
 
 export default function Search() {
   const { state } = useLocation();
-  let s;
+  if (!state) {
+    throw new Error(
+      `ERROR: State reached Dashboard with null 'state' in context`
+    );
+  }
   const [songs, setSongs] = useState([]);
   const [attribute, setAttribute] = useState(state ? state.attribute : "");
   const [condition, setCondition] = useState(state ? state.condition : "");
@@ -52,8 +56,8 @@ export default function Search() {
 
   useEffect(() => {
     console.log("State updated" + state.attribute + " " + state.condition);
-    setAttribute(state.attribute);
-    setCondition(state.condition);
+    setAttribute(state ? state.attribute : "");
+    setCondition(state ? state.condition : "");
   }, [state]);
 
   useEffect(() => {

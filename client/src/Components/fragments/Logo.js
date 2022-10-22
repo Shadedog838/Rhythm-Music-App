@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 export default function LogoIcon() {
   return (
     <div className="logo">
-      <Link to={"/home"}>
+      <Link to={"/home"} onClick={() => window.reload()}>
         <img src={Logo} width={"70px"} alt=""/>
       </Link>
     </div>
