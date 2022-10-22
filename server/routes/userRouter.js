@@ -142,10 +142,22 @@ router.get("/playlists/:userId", async(req,res)=>{
     })
 })
 
+//modify playlist name
 router.put("/playlist/modifyname", (req,res)=>{
     const userName = req.body.username
     const newName = req.body.newname
-    
+    const previousName = req.body.playlistname 
+    const queryString = `update playlist set name=$1 where username=$2 AND name=$3 returning name;`
+    pool.query(queryString,[newName,userName,previousName],(error,update)=>{
+        if(error){
+            res.sendStatus(500)
+            return;
+        }
+        if(update.rowCount ==1){
+            
+            res.status(200).json(update.rows[0])
+        }
+    })
 
 
 })
