@@ -4,13 +4,17 @@
     * Register user
     * login user
     * create user playlist
-    * get user's playlist
+    * get all user's playlist
+    * modfigy playlist name
 */
 const express = require("express");
 const router = express.Router();
 const pool = require("../db")
 const bcrypt = require("bcrypt");
 const { response } = require("express");
+
+
+
 
 //Register user
 router.post("/register", async (req, res) => {
@@ -25,7 +29,6 @@ router.post("/register", async (req, res) => {
         if (error) {
             res.status(500)
         }
-        console.log(value)
         if (value.rowCount < 1 || Number(value.rows[0].count)>= 1) {
             res.sendStatus(409)
         }else{
@@ -60,7 +63,14 @@ router.post("/login", async (req, res) => {
         }
         // comparig passwords 
         if( dataobj.rowCount==1 && await bcrypt.compare(password,dataobj.rows[0].password)){
-            res.status(200).json({"message":"loggedin"})
+            var date = new Date()
+            pool.query("UPDATE users SET lastaccessdate=$1 where username=$2",[date.toISOString(),username], (error,response)=>{
+                if(error){
+                    console.log(error)
+                    res.sendStatus(500)
+                }
+                res.status(200).json({"message":"loggedin"})
+            })
         }else{
             res.status(401).json({"message":"loginFailed"})
         }
@@ -69,6 +79,7 @@ router.post("/login", async (req, res) => {
 
 })
 
+// create user playlist
 router.post("/createplaylist", async(req,res)=>{
     const playlistname = req.body.name
     const username = req.body.username
@@ -96,11 +107,12 @@ router.post("/createplaylist", async(req,res)=>{
     })
 })
 
-
-router.get("playlists/:userId", async(req,res)=>{
-    const userquerystring = 'Select username from users where username==$1'
+// get all playlist for a user
+router.get("/playlists/:userId", async(req,res)=>{
+    const userquerystring = 'SELECT * from users where username=$1'
     pool.query(userquerystring,[req.params.userId], (error,response)=>{
         if(error){
+            
             console.log(error)
             res.sendStatus(500)
             return;
@@ -109,7 +121,7 @@ router.get("playlists/:userId", async(req,res)=>{
             res.sendStatus(404)
             return;
         }
-        const playlistqueryString = "Select (pid , name) from playlist where username=$1"
+        const playlistqueryString = `Select (pid , name) from playlist where username=$1`
         pool.query(playlistqueryString,[req.params.userId],(error,listofplaylist)=>{
             if(error){
                 console.log(error)
@@ -120,12 +132,17 @@ router.get("playlists/:userId", async(req,res)=>{
                 res.sendStatus(404)
                 return
             }
-
-
-
+            res.send(200).json(lisofplaylist.rows)
         })
 
     })
+})
+
+router.put("/playlist/modifyname", (req,res)=>{
+    const userName = req.body.username
+    const newName = req.body.newname
+    
+
 
 })
 
