@@ -129,5 +129,30 @@ router.get("playlists/:userId", async(req,res)=>{
 
 })
 
+router.post("/playlist/addsong", async (req, res) => {
+    try {
+        const pid = req.body.pid;
+        const songID = req.body.sid;
+        const allNames = await pool.query(
+            "INSERT INTO playlist_contains(pid,sid)VALUES ($1,$2)",[pid,songID]
+        );
+        res.json(allNames.rows);
+    } catch (err) {
+        console.log(err.message);
+    }
+});
+router.post("playlist/deletesong", async (req,res)=> {
+    try{
+        const pid = req.body.pid;
+        const songID = req.body.sid;
+        const allNames = await pool.query(
+            "DELETE FROM playlist_contains WHERE pid = $1 AND sid = $2",[pid,songID]
+        );
+        res.json(allNames.rows);
+    } catch(err) {
+        console.log(err.message);
+    }
+});
+
 module.exports = router;
 
