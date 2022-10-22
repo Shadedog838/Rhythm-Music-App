@@ -5,6 +5,9 @@
     * login user
     * create user playlist
     * get user's playlist
+    * get songs from specific playlist
+    * add song to playlist
+    * remove song from playlist
 */
 const express = require("express");
 const router = express.Router();
@@ -129,6 +132,22 @@ router.get("playlists/:userId", async(req,res)=>{
 
 })
 
+
+// get songs from specfic playslist id
+router.get("/playlist/:pid", async (req,res) =>{
+    try{
+        const pid = req.params.pid;
+        const allNames = await pool.query(
+            "SELECT s.title FROM song as s WHERE sid = (SELECT sid FROM playlist_contains WHERE pid= " +pid+ ")" 
+        );
+        res.json(allNames.rows);
+    } catch (err) {
+        console.log(err.message)
+    }
+});
+
+
+//add song to playlist
 router.post("/playlist/addsong", async (req, res) => {
     try {
         const pid = req.body.pid;
@@ -141,6 +160,8 @@ router.post("/playlist/addsong", async (req, res) => {
         console.log(err.message);
     }
 });
+
+// remove song from playlist
 router.post("playlist/deletesong", async (req,res)=> {
     try{
         const pid = req.body.pid;
