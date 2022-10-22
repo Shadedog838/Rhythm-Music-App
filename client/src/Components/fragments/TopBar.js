@@ -6,39 +6,29 @@ import { Link } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import LogoIcon from "./Logo";
 import Button from "react-bootstrap/Button";
-import { useDispatch } from "react-redux";
+import eventBus from "../../eventBus";
 import "../assets/scss/TopBar.scss";
 
-const setSeachQuery = (content) => {
-  return {
-    type: "SET_SEARCH_QUERY",
-    content,
-  };
-};
+
 
 export default function TopBar() {
   const [searchQuery, setSearchQuery] = useState({});
-  const [attribute, setAttribute] = useState("");
+  const [attribute, setAttribute] = useState("s.title");
   const [condition, setCondition] = useState("");
-  const searchRef = useRef();
+  const searchLink = useRef();
 
   const handleAttribute = (e) => {
-    setAttribute = e.target.value;
+    setAttribute(e.target.value);
   };
 
   const handleCondition = (e) => {
-    setCondition = e.target.value;
+    setCondition(e.target.value);
   };
 
-  const handleSearchQuery = () => {
-    setSearchQuery({
-      atrribute: attribute,
-      condition: condition,
-    });
+  const handleSearchQuery = (e) => {
+    e.preventDefault();
+    if (searchQuery !== null) searchLink.current.click();
   };
-
-  // const dispatch = useDispatch();
-  const searchLink = useRef();
 
   const useStyle = useContext(ThemeContext);
   return (
@@ -56,7 +46,10 @@ export default function TopBar() {
       </div>
       <div className="SearchBar">
         <Form onSubmit={handleSearchQuery} className="d-flex">
-          <Link to={"/home/search"} ref={searchLink} />
+          <Link to={"/home/search"} ref={searchLink} state={{
+            "attribute": attribute,
+            "condition": condition
+          }}/>
           <Form.Control
             type="search"
             placeholder="Search"
@@ -64,7 +57,7 @@ export default function TopBar() {
             aria-label="Search"
             onChange={handleCondition}
           />
-          <Button variant="outline-success">Search</Button>
+          <Button className="ms-2" variant="outline-success" type="submit">Search</Button>
         </Form>
       </div>
       <div className="item">
@@ -73,3 +66,4 @@ export default function TopBar() {
     </nav>
   );
 }
+
