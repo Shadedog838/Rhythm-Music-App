@@ -2,7 +2,6 @@
   font-family: Consolas, sans-serif;
   background: #794141;
   background: linear-gradient(110deg, rgba(33, 30, 32, 0.4941176471) 50%, #ba5353 50%);
-  height: 100vh;
   text-align: center;
   display: flex;
   flex-flow: column wrap;

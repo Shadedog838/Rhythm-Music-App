@@ -1,0 +1,19 @@
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+  border: 1px solid #dddddd;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+.sort-select {
+  display: flex;
+  justify-content: flex-start;
+  justify-content: space-evenly;
+  width: 50%;
+}/*# sourceMappingURL=MusicListContainer.css.map */

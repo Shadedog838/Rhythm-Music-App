@@ -29,9 +29,9 @@ router.get("/", async (req, res) => {
     try {
         const allNames = await pool.query(
             "select s.title, a.name, al.name as album_name, s.length, count(p.sid) as Times_Played" +
-            " from artist as a, album as al, song as s" +
+            " from artist as a, album as al, genre as g, song as s" +
             " LEFT JOIN plays as p on s.sid = p.sid" +
-            " where s.artistid = a.artistid and s.albumid = al.albumid" +
+            " where s.artistid = a.artistid and s.albumid = al.albumid and s.genre_id = g.genreid" +
             " GROUP BY (s.title, a.name, al.name, s.length)" +
             " ORDER BY s.title, a.name ASC")
         res.json(allNames.rows);
@@ -47,11 +47,11 @@ router.get("/sort", async (req, res) => {
         const { attribute , condition} = req.body;
 
         const allNames = await pool.query(
-            "select s.title, a.name, al.name as album_name, s.length, count(p.sid) as Times_Played" +
-            " from artist as a, album as al, song as s" +
+            "select s.title, a.name, al.name as album_name, s.length, extract (year from s.releasedate) as year, count(p.sid) as Times_Played" +
+            " from artist as a, album as al, genre as g, song as s" +
             " LEFT JOIN plays as p on s.sid = p.sid" +
-            " where s.artistid = a.artistid and s.albumid = al.albumid" +
-            " GROUP BY (s.title, a.name, al.name, s.length)" +
+            " where s.artistid = a.artistid and s.albumid = al.albumid and s.genre_id = g.genreid" +
+            " GROUP BY (s.title, a.name, al.name, s.length, s.releasedate)" +
             " ORDER BY " + attribute + " " + condition
         );
         res.json(allNames.rows);
@@ -68,11 +68,11 @@ router.get("/search", async (req, res) => {
 
         const allNames = await pool.query(
             "select s.title, a.name, al.name as album_name, s.length, count(p.sid) as Times_Played" +
-            " from artist as a, album as al, song as s" +
+            " from artist as a, album as al, genre as g, song as s" +
             " LEFT JOIN plays as p on s.sid = p.sid" +
-            " where s.artistid = a.artistid and s.albumid = al.albumid and lower(" + attribute + ") like lower('%" + condition + "%')" +  
+            " where s.artistid = a.artistid and s.albumid = al.albumid and s.genre_id = g.genreid and lower(" + attribute + ") like lower('%" + condition + "%')" +
             " GROUP BY (s.title, a.name, al.name, s.length) " +
-            " ORDER BY s.title, a.name ASC" 
+            " ORDER BY s.title, a.name ASC"
         );
         res.json(allNames.rows);
     } catch (err) {

@@ -21,7 +21,7 @@ export default function Login() {
 
   return (
     <Fragment>
-      <h1 className="mt-5 text-center">Login</h1>
+      <h1 className="mt-5 text-center text-white">Login</h1>
       <Form
         className=""
         noValidate
@@ -65,7 +65,7 @@ export default function Login() {
         </Row>
         <div className="text-center">
           <Button className="btn btn-success btn-block w-25" type="submit">Login</Button>
-          <p>
+          <p className="text-white">
             Don't have an account? <Link to="/register">register</Link>
           </p>
         </div>

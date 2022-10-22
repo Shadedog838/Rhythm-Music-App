@@ -9,12 +9,13 @@ import Register from './Components/Pages/Register';
 
 function App() {
   return (
-    <ThemeContext.Provider  value={themes.light}>
+    <ThemeContext.Provider  value={themes.dark}>
       <>
       <Router>
           <Routes>
             <Route exact path='/' element={<Start />} />
-            <Route exact path='/home' element={<Home />} />
+            <Route path='/home' element={<Home />} />
+            <Route path='/home/search' element={<Home />} />
             <Route exact path='/login' element={<Login />} />
             <Route exact path='/register' element={<Register />} />
           </Routes>

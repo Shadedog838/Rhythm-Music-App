@@ -21,7 +21,7 @@ export default function Register() {
 
   return (
     <Fragment>
-      <h1 className="mt-5 text-center">Register</h1>
+      <h1 className="mt-5 text-center text-white">Register</h1>
       <Form noValidate validated={validated} onSubmit={handleSubmit}>
         <Row className="mb-3">
           <Form.Group
@@ -87,7 +87,7 @@ export default function Register() {
         </Row>
         <div className="text-center">
           <Button className="btn btn-success btn-block w-25" type="submit">Register</Button>
-          <p>
+          <p className="text-white">
             Already have an account? <Link to="/login">login</Link>
           </p>
         </div>
