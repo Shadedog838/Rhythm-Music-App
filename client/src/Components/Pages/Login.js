@@ -5,6 +5,7 @@ import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import Row from "react-bootstrap/Row";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function Login() {
   const [validated, setValidated] = useState(false);
@@ -20,25 +21,33 @@ export default function Login() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const form = event.currentTarget;
+    let form = event.currentTarget;
     if (form.checkValidity() === false) {
       event.preventDefault();
       event.stopPropagation();
     }
     setValidated(true);
-    try {
-      const body = { username, password };
-      const response = await fetch("http://localhost:5000/user/login", {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify(body),
-      });
-      const jsonData = await response.json();
-      console.log(jsonData);
-    } catch (err) {
-      console.error(err.message);
+    if (validated == true) {
+      try {
+        const body = { username, password };
+        const response = await fetch("http://localhost:5000/user/login", {
+          method: "POST",
+          headers: {
+            "Content-type": "application/json",
+          },
+          body: JSON.stringify(body),
+        });
+        const jsonData = await response.json();
+        if (response.status == 200) {
+          console.log("Log in successful");
+          setValidated(true);
+        } else {
+          console.log("Log in unsuccessful");
+          toast.error("PLease enter a valid username or password");
+        }
+      } catch (err) {
+        console.error(err.message);
+      }
     }
   };
 
