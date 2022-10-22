@@ -42,10 +42,10 @@ router.get("/", async (req, res) => {
 
 // attribute: column to be sorted by
 // condition: ASC or DESC
-router.get("/sort", async (req, res) => {
+router.get("/sort/:attribute/:condition", async (req, res) => {
     try {
-        const { attribute , condition} = req.body;
-
+        const { attribute , condition} = req.params;
+        
         const allNames = await pool.query(
             "select s.title, a.name, al.name as album_name, s.length, extract (year from s.releasedate) as year, count(p.sid) as Times_Played" +
             " from artist as a, album as al, genre as g, song as s" +
@@ -62,10 +62,10 @@ router.get("/sort", async (req, res) => {
 
 // attribute: column to search
 // condition: term to search
-router.get("/search", async (req, res) => {
+router.get("/search/:attribute/:condition", async (req, res) => {
     try {
-        const { attribute , condition} = req.body;
-
+        const { attribute , condition} = req.params;
+        console.log(attribute)
         const allNames = await pool.query(
             "select s.title, a.name, al.name as album_name, s.length, count(p.sid) as Times_Played" +
             " from artist as a, album as al, genre as g, song as s" +
