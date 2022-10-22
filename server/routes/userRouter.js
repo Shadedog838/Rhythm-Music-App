@@ -3,13 +3,14 @@
                     IMPLEMENTED METHODS 
     * Register user
     * login user
+    * create user playlist
+    * get user's playlist
 */
 const express = require("express");
 const router = express.Router();
 const pool = require("../db")
 const bcrypt = require("bcrypt");
-
-
+const { response } = require("express");
 
 //Register user
 router.post("/register", async (req, res) => {
@@ -67,5 +68,66 @@ router.post("/login", async (req, res) => {
     
 
 })
+
+router.post("/createplaylist", async(req,res)=>{
+    const playlistname = req.body.name
+    const username = req.body.username
+    const userString = "Select username from users where username= $1"
+    pool.query(userString,[username], (error, response)=>{
+        if(error){
+            console.log(error)
+            res.sendStatus(500)
+        }
+        if(!response || response.rowCount == 0){
+            res.status(404).json({"message":"user not found"})
+            return
+        }
+        const playlistString = "Insert into playlist(username,name) values ($1,$2)"
+        pool.query(playlistString,[username,playlistname], (error, inserted)=>{
+            if(error){
+                console.log(error)
+                res.sendStatus(500)
+                return
+            }
+            if(inserted){
+                res.sendStatus(201)
+            }
+        })
+    })
+})
+
+
+router.get("playlists/:userId", async(req,res)=>{
+    const userquerystring = 'Select username from users where username==$1'
+    pool.query(userquerystring,[req.params.userId], (error,response)=>{
+        if(error){
+            console.log(error)
+            res.sendStatus(500)
+            return;
+        }
+        if(response.rowCount <1){
+            res.sendStatus(404)
+            return;
+        }
+        const playlistqueryString = "Select (pid , name) from playlist where username=$1"
+        pool.query(playlistqueryString,[req.params.userId],(error,listofplaylist)=>{
+            if(error){
+                console.log(error)
+                res.sendStatus(500)
+                return
+            }
+            if(listofplaylist.rowCount < 1){
+                res.sendStatus(404)
+                return
+            }
+
+
+
+        })
+
+    })
+
+})
+
 module.exports = router;
 
