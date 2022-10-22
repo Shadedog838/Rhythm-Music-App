@@ -14,6 +14,7 @@
     * follow user
     * unfollow user
     * play whole playlist
+    * delete playlist
 */
 const express = require("express");
 const router = express.Router();
@@ -73,7 +74,7 @@ router.post("/login", async (req, res) => {
                     console.log(error)
                     res.sendStatus(500)
                 }
-                res.status(200).json({"message":"loggedin"})
+                res.status(200).json({"message":"loggedin","username":`${username}`})
             })
         }else{
             res.status(401).json({"message":"loginFailed"})
@@ -142,10 +143,22 @@ router.get("/playlists/:userId", async(req,res)=>{
     })
 })
 
+//modify playlist name
 router.put("/playlist/modifyname", (req,res)=>{
     const userName = req.body.username
     const newName = req.body.newname
-    
+    const previousName = req.body.playlistname 
+    const queryString = `update playlist set name=$1 where username=$2 AND name=$3 returning name;`
+    pool.query(queryString,[newName,userName,previousName],(error,update)=>{
+        if(error){
+            res.sendStatus(500)
+            return;
+        }
+        if(update.rowCount ==1){
+            
+            res.status(200).json(update.rows[0])
+        }
+    })
 
 
 })
@@ -251,6 +264,36 @@ router.post("/playlist/play", async (req,res)=> {
         );
         res.json(allNames.rows);
     } catch(err) {
+        console.log(err.message)
+    }
+});
+//delete playlist
+router.delete("/playlist/delete", async (req,res)=> {
+    try{
+        const username = req.body.username;
+        const pid = req.body.pid
+        pool.query("select * from playlist where username =$1 and pid=$2",[username,pid], async (error,value)=>{
+            if(error){
+                console.log(error)
+                res.sendStatus(500)
+                return
+            }
+            if(value.rowCount ==0 || !value){
+                res.sendStatus(401)
+                return
+            }
+            const pp = await pool.query(
+                "DELETE FROM playlist_contains WHERE pid = $1",[pid] 
+            )
+            const allNames = await pool.query(
+                "DELETE FROM playlist WHERE pid = $1",[pid]
+            );
+            res.json(allNames.rows);
+
+        })
+        
+       
+    } catch(err){
         console.log(err.message)
     }
 });
