@@ -1,8 +1,9 @@
 // Express for hosting
 const express = require('express');
 const app = express();
+require('dotenv').config();
 const cors = require("cors")
-const port = 3000;
+const port = process.env.SERVER_PORT;
 
 
 // middleware
