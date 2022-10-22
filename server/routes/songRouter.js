@@ -64,7 +64,7 @@ router.get("/sort/:attribute/:condition", async (req, res) => {
 router.get("/search/:attribute/:condition", async (req, res) => {
     try {
         const { attribute , condition} = req.params;
-        console.log(attribute, condition);
+
         const allNames = await pool.query(
             "select s.title, a.name, al.name as album_name, s.length, count(p.sid) as Times_Played" +
             " from artist as a, album as al, genre as g, song as s" +
@@ -77,6 +77,20 @@ router.get("/search/:attribute/:condition", async (req, res) => {
     } catch (err) {
         console.log(err.message);
     }
+});
+
+router.post("/plays/", async(req,res)=> {
+    try {
+        const username = req.body.username;
+        const sid = req.body.sid;
+        const date = new Date();
+        const allNames = await pool.query(
+            "INSERT INTO plays(username,sid,datetimeplayed)VALUES ($1,$2,$3)",[username,sid, date.toISOString()]
+        );
+            res.json(allNames.rows);
+        } catch (err) {
+            console.log(err.message);
+        }
 });
 
 
