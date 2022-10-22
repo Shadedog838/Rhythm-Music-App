@@ -6,15 +6,19 @@
     * create user playlist
     * get all user's playlist
     * modfigy playlist name
+    * get user's playlist
+    * get songs from specific playlist
+    * add song to playlist
+    * remove song from playlist
+    * search user email
+    * follow user
+    * unfollow user
+    * play whole playlist
 */
 const express = require("express");
 const router = express.Router();
 const pool = require("../db")
 const bcrypt = require("bcrypt");
-const { response } = require("express");
-
-
-
 
 //Register user
 router.post("/register", async (req, res) => {
@@ -145,6 +149,111 @@ router.put("/playlist/modifyname", (req,res)=>{
 
 
 })
+
+
+// get songs from specfic playslist id
+router.get("/playlist/:pid", async (req,res) =>{
+    try{
+        const pid = req.params.pid;
+        const allNames = await pool.query(
+            "SELECT s.title FROM song as s WHERE sid = (SELECT sid FROM playlist_contains WHERE pid= " +pid+ ")" 
+        );
+        res.json(allNames.rows);
+    } catch (err) {
+        console.log(err.message)
+    }
+});
+
+
+//add song to playlist
+router.post("/playlist/addsong", async (req, res) => {
+    try {
+        const pid = req.body.pid;
+        const songID = req.body.sid;
+        const allNames = await pool.query(
+            "INSERT INTO playlist_contains(pid,sid)VALUES ($1,$2)",[pid,songID]
+        );
+        res.json(allNames.rows);
+    } catch (err) {
+        console.log(err.message);
+    }
+});
+
+// remove song from playlist
+router.delete("playlist/deletesong", async (req,res)=> {
+    try{
+        const pid = req.body.pid;
+        const songID = req.body.sid;
+        const allNames = await pool.query(
+            "DELETE FROM playlist_contains WHERE pid = $1 AND sid = $2",[pid,songID]
+        );
+        res.json(allNames.rows);
+    } catch(err) {
+        console.log(err.message);
+    }
+});
+
+//search by email
+router.get("/usersearch/:attribute", async (req, res) => {
+    try {
+        const attribute = req.params.attribute;
+        console.log(attribute)
+        const allNames = await pool.query(
+            "select email, username" +
+            " from users" +
+            " where lower(email) like lower('%" + attribute + "%')" 
+        );
+        console.log(allNames)
+        res.json(allNames.rows);
+    } catch (err) {
+        console.log(err.message);
+    }
+});
+
+//follow user
+router.post("/follow", async (req,res)=> {
+    try{
+        const username1 = req.body.username1;
+        const username2 = req.body.username2;
+        
+        const allNames = await pool.query(
+            "INSERT INTO follow(followid,followedbyid)VALUES ($1,$2)",[username1,username2]
+           
+        );
+        res.json(allNames.rows);
+    } catch(err) {
+        console.log(err.message);
+    }
+});
+
+//unfollow user
+router.delete("/unfollow", async (req,res)=> {
+    try{
+        const username1 = req.body.username1;
+        const username2 = req.body.username2;
+        const allNames = await pool.query(
+            "DELETE FROM follow WHERE followid = $1 AND followedbyid = $2",[username1,username2]
+        );
+        res.json(allNames.rows);
+    } catch(err) {
+        console.log(err.message);
+    }
+});
+
+//play whole playlist
+router.post("/playlist/play", async (req,res)=> {
+    try{
+        const username = req.body.username;
+        const pid = req.body.pid;
+        const date = new Date();
+        const allNames = await pool.query(
+            "INSERT INTO plays(username,sid,datetimeplayed) select $1, sid, $3 from playlist_contains where pid=$2",[username,pid, date.toISOString()]
+        );
+        res.json(allNames.rows);
+    } catch(err) {
+        console.log(err.message)
+    }
+});
 
 module.exports = router;
 
