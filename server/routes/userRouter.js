@@ -8,12 +8,15 @@
     * get songs from specific playlist
     * add song to playlist
     * remove song from playlist
+    * search user email
+    * follow user
+    * unfollow user
 */
 const express = require("express");
 const router = express.Router();
 const pool = require("../db")
 const bcrypt = require("bcrypt");
-const { response } = require("express");
+const { response, json } = require("express");
 
 //Register user
 router.post("/register", async (req, res) => {
@@ -162,12 +165,59 @@ router.post("/playlist/addsong", async (req, res) => {
 });
 
 // remove song from playlist
-router.post("playlist/deletesong", async (req,res)=> {
+router.delete("playlist/deletesong", async (req,res)=> {
     try{
         const pid = req.body.pid;
         const songID = req.body.sid;
         const allNames = await pool.query(
             "DELETE FROM playlist_contains WHERE pid = $1 AND sid = $2",[pid,songID]
+        );
+        res.json(allNames.rows);
+    } catch(err) {
+        console.log(err.message);
+    }
+});
+
+//search by email
+router.get("/usersearch/:attribute", async (req, res) => {
+    try {
+        const attribute = req.params.attribute;
+        console.log(attribute)
+        const allNames = await pool.query(
+            "select email, username" +
+            " from users" +
+            " where lower(email) like lower('%" + attribute + "%')" 
+        );
+        console.log(allNames)
+        res.json(allNames.rows);
+    } catch (err) {
+        console.log(err.message);
+    }
+});
+
+//follow user
+router.post("/follow", async (req,res)=> {
+    try{
+        const pid1 = req.body.pid1;
+        const pid2 = req.body.pid2;
+        
+        const allNames = await pool.query(
+            "INSERT INTO follow(followid,followedbyid)VALUES ($1,$2)",[pid1,pid2]
+           
+        );
+        res.json(allNames.rows);
+    } catch(err) {
+        console.log(err.message);
+    }
+});
+
+//unfollow user
+router.delete("/unfollow", async (req,res)=> {
+    try{
+        const pid1 = req.body.pid1;
+        const pid2 = req.body.pid2;
+        const allNames = await pool.query(
+            "DELETE FROM follow WHERE followid = $1 AND followedbyid = $2",[pid1,pid2]
         );
         res.json(allNames.rows);
     } catch(err) {
