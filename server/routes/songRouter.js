@@ -45,13 +45,12 @@ router.get("/", async (req, res) => {
 router.get("/sort/:attribute/:condition", async (req, res) => {
     try {
         const { attribute , condition} = req.params;
-        
         const allNames = await pool.query(
-            "select s.title, a.name, al.name as album_name, s.length, extract (year from s.releasedate) as year, count(p.sid) as Times_Played" +
+            "select s.title, a.name, al.name as album_name, s.length, g.name as genre, extract (year from s.releasedate) as year, count(p.sid) as Times_Played" +
             " from artist as a, album as al, genre as g, song as s" +
             " LEFT JOIN plays as p on s.sid = p.sid" +
             " where s.artistid = a.artistid and s.albumid = al.albumid and s.genre_id = g.genreid" +
-            " GROUP BY (s.title, a.name, al.name, s.length, s.releasedate)" +
+            " GROUP BY (s.title, a.name, al.name, s.length, g.name, s.releasedate)" +
             " ORDER BY " + attribute + " " + condition
         );
         res.json(allNames.rows);
@@ -65,7 +64,7 @@ router.get("/sort/:attribute/:condition", async (req, res) => {
 router.get("/search/:attribute/:condition", async (req, res) => {
     try {
         const { attribute , condition} = req.params;
-        console.log(attribute)
+        console.log(attribute, condition);
         const allNames = await pool.query(
             "select s.title, a.name, al.name as album_name, s.length, count(p.sid) as Times_Played" +
             " from artist as a, album as al, genre as g, song as s" +

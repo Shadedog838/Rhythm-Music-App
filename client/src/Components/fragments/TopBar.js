@@ -6,7 +6,6 @@ import { Link } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import LogoIcon from "./Logo";
 import Button from "react-bootstrap/Button";
-import eventBus from "../../eventBus";
 import "../assets/scss/TopBar.scss";
 
 
@@ -46,7 +45,7 @@ export default function TopBar() {
       </div>
       <div className="SearchBar">
         <Form onSubmit={handleSearchQuery} className="d-flex">
-          <Link to={"/home/search"} ref={searchLink} state={{
+          <Link to={"/home/search"}  ref={searchLink} state={{
             "attribute": attribute,
             "condition": condition
           }}/>

@@ -15,8 +15,8 @@ import "../assets/scss/MusicListContainer.scss";
 export default function MusicListConatiner() {
   const [songs, setSongs] = useState([]);
   const [limit, setLimit] = useState(10);
-  const [attribute, setAttribute] = useState("");
-  const [condition, setCondition] = useState("");
+  const [attribute, setAttribute] = useState("s.title");
+  const [condition, setCondition] = useState("ASC");
 
   const getSongs = async () => {
     try {
@@ -51,13 +51,11 @@ export default function MusicListConatiner() {
   const handleSort = async () => {
     try {
       console.log(attribute, condition);
-      if (attribute != "" && condition != "") {
+      if (attribute !== "" && condition !== "") {
         const body = { attribute, condition };
-        const response = fetch("http://localhost:5000/song/sort", {
-          method: "GET",
-          body: JSON.stringify(body),
-        });
+        const response = await fetch(`http://localhost:5000/song/sort/${attribute}/${condition}`);
         const jsonData = await response.json();
+        console.log(jsonData)
         setSongs(jsonData);
       }
     } catch (err) {
@@ -73,10 +71,10 @@ export default function MusicListConatiner() {
     getSongs();
   }, []);
 
-  console.log(songs);
+  // console.log(songs);
   return (
     <>
-      {songs.length != 0 ? (
+      {songs.length !== 0 ? (
         <div className="music-list-container">
           <Fragment>
             <div className="sort-select">
@@ -86,7 +84,7 @@ export default function MusicListConatiner() {
                 onChange={handleAttribute}
               >
                 <option>Chooses what you want to sort by:</option>
-                <option value="s.name">Song Name</option>
+                <option value="s.title">Song Name</option>
                 <option value="a.name">Artist Name</option>
                 <option value="g.name">Genre</option>
                 <option value="year">Realese Year</option>
@@ -111,6 +109,7 @@ export default function MusicListConatiner() {
                   <th>Title</th>
                   <th>Artist</th>
                   <th>Album</th>
+                  <th>Genre</th>
                   <th>Lenth</th>
                   <th>Listen #</th>
                   <th>Play</th>
@@ -125,6 +124,7 @@ export default function MusicListConatiner() {
                       <td>{song.title}</td>
                       <td>{song.name}</td>
                       <td>{song.album_name}</td>
+                      <td>{song.genre}</td>
                       <td>{convertMsToMinuteSeconds(song.length)}</td>
                       <td>{song.times_played}</td>
                       <td>

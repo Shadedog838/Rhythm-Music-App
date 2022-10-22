@@ -1,4 +1,4 @@
-import React, { useSyncExternalStore } from "react";
+import React from "react";
 import { useEffect, useState, useContext } from "react";
 import Search from "./Search";
 import { Skeleton } from "@material-ui/lab";
