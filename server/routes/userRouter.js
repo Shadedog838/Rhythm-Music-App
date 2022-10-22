@@ -11,6 +11,7 @@
     * search user email
     * follow user
     * unfollow user
+    * play whole playlist
 */
 const express = require("express");
 const router = express.Router();
@@ -198,11 +199,11 @@ router.get("/usersearch/:attribute", async (req, res) => {
 //follow user
 router.post("/follow", async (req,res)=> {
     try{
-        const pid1 = req.body.pid1;
-        const pid2 = req.body.pid2;
+        const username1 = req.body.username1;
+        const username2 = req.body.username2;
         
         const allNames = await pool.query(
-            "INSERT INTO follow(followid,followedbyid)VALUES ($1,$2)",[pid1,pid2]
+            "INSERT INTO follow(followid,followedbyid)VALUES ($1,$2)",[username1,username2]
            
         );
         res.json(allNames.rows);
@@ -214,14 +215,29 @@ router.post("/follow", async (req,res)=> {
 //unfollow user
 router.delete("/unfollow", async (req,res)=> {
     try{
-        const pid1 = req.body.pid1;
-        const pid2 = req.body.pid2;
+        const username1 = req.body.username1;
+        const username2 = req.body.username2;
         const allNames = await pool.query(
-            "DELETE FROM follow WHERE followid = $1 AND followedbyid = $2",[pid1,pid2]
+            "DELETE FROM follow WHERE followid = $1 AND followedbyid = $2",[username1,username2]
         );
         res.json(allNames.rows);
     } catch(err) {
         console.log(err.message);
+    }
+});
+
+//play whole playlist
+router.post("/playlist/play", async (req,res)=> {
+    try{
+        const username = req.body.username;
+        const pid = req.body.pid;
+        const date = new Date();
+        const allNames = await pool.query(
+            "INSERT INTO plays(username,sid,datetimeplayed) select $1, sid, $3 from playlist_contains where pid=$2",[username,pid, date.toISOString()]
+        );
+        res.json(allNames.rows);
+    } catch(err) {
+        console.log(err.message)
     }
 });
 
