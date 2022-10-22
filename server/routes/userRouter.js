@@ -74,7 +74,7 @@ router.post("/login", async (req, res) => {
                     console.log(error)
                     res.sendStatus(500)
                 }
-                res.status(200).json({"message":"loggedin"})
+                res.status(200).json({"message":"loggedin","username":`${username}`})
             })
         }else{
             res.status(401).json({"message":"loginFailed"})
