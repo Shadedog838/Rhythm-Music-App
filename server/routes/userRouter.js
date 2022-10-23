@@ -126,8 +126,10 @@ router.get("/playlists/:userId", async(req,res)=>{
             res.sendStatus(404)
             return;
         }
-        const playlistqueryString = `Select p.pid, p.name, count( p.pid = pc.pid ) 
-        from playlist as p, playlist_contains as pc where username=$1 group by  (p.pid) order by p.name ASC `
+        const playlistqueryString=`select p.name, p.username,p.pid, count(pc.sid) as total_songs, sum(s.length)
+        as total_time from playlist as p, playlist_contains as pc, song as s
+        where p.username=$1 and p.pid=pc.pid and s.sid=pc.sid group by (p.pid,p.username,p.name) group by p.name ASC`
+        
         pool.query(playlistqueryString,[req.params.userId],(error,listofplaylist)=>{
             if(error){
                 console.log(error)
