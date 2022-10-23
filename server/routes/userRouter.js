@@ -1,6 +1,6 @@
 // Routes for all USER related operations //
 /*
-                    IMPLEMENTED METHODS 
+                    IMPLEMENTED METHODS
     * Register user
     * login user
     * create user playlist
@@ -23,18 +23,18 @@ const bcrypt = require("bcrypt");
 
 //Register user
 router.post("/register", async (req, res) => {
-    var cusername = req.body.username
-    var fName = req.body.firstname
-    var lName = req.body.lastname
-    var Password = req.body.password
-    var email = req.body.email
+    const cusername = req.body.username
+    const fName = req.body.firstname
+    const lName = req.body.lastname
+    const Password = req.body.password
+    const email = req.body.email
     query = `INSERT INTO users(username,firstname,lastname,email,password)VALUES($1,$2,$3,$4,$5)`
     //checking if username or password exists
     pool.query(`SELECT COUNT(*) FROM users WHERE username=$1 or email=$2 ;`, [cusername, email], async(error, value) => {
         if (error) {
-            res.status(500)
+            res.sendStatus(500)
         }
-        if (value.rowCount < 1 || Number(value.rows[0].count)>= 1) {
+        if (value?.rowCount < 1 || Number(value?.rows[0].count)>= 1) {
             res.sendStatus(409)
         }else{
         const saltval = await bcrypt.genSalt(10)
@@ -47,14 +47,14 @@ router.post("/register", async (req, res) => {
                 res.sendStatus(500)
             }
             if (value) {
-                res.sendStatus(201)
+                res.status(201).json({"message": "created", "username": `${cusername}`})
             }
         })}
     })
 
 })
 
-//Log in user 
+//Log in user
 router.post("/login", async (req, res) => {
     const username = req.body.username
     const password = req.body.password
@@ -66,8 +66,8 @@ router.post("/login", async (req, res) => {
             console.log(error)
             res.sendStatus(500)
         }
-        // comparig passwords 
-        if( dataobj.rowCount==1 && await bcrypt.compare(password,dataobj.rows[0].password)){
+        // comparig password
+        if( dataobj?.rowCount==1 && await bcrypt.compare(password,dataobj.rows[0].password)){
             var date = new Date()
             pool.query("UPDATE users SET lastaccessdate=$1 where username=$2",[date.toISOString(),username], (error,response)=>{
                 if(error){
@@ -80,7 +80,7 @@ router.post("/login", async (req, res) => {
             res.status(401).json({"message":"loginFailed"})
         }
     })
-    
+
 
 })
 
@@ -117,7 +117,7 @@ router.get("/playlists/:userId", async(req,res)=>{
     const userquerystring = 'SELECT * from users where username=$1'
     pool.query(userquerystring,[req.params.userId], (error,response)=>{
         if(error){
-            
+
             console.log(error)
             res.sendStatus(500)
             return;
@@ -147,7 +147,7 @@ router.get("/playlists/:userId", async(req,res)=>{
 router.put("/playlist/modifyname", (req,res)=>{
     const userName = req.body.username
     const newName = req.body.newname
-    const previousName = req.body.playlistname 
+    const previousName = req.body.playlistname
     const queryString = `update playlist set name=$1 where username=$2 AND name=$3 returning name;`
     pool.query(queryString,[newName,userName,previousName],(error,update)=>{
         if(error){
@@ -155,7 +155,7 @@ router.put("/playlist/modifyname", (req,res)=>{
             return;
         }
         if(update.rowCount ==1){
-            
+
             res.status(200).json(update.rows[0])
         }
     })
@@ -169,7 +169,7 @@ router.get("/playlist/:pid", async (req,res) =>{
     try{
         const pid = req.params.pid;
         const allNames = await pool.query(
-            "SELECT s.title FROM song as s WHERE sid = (SELECT sid FROM playlist_contains WHERE pid= " +pid+ ")" 
+            "SELECT s.title FROM song as s WHERE sid = (SELECT sid FROM playlist_contains WHERE pid= " +pid+ ")"
         );
         res.json(allNames.rows);
     } catch (err) {
@@ -214,7 +214,7 @@ router.get("/usersearch/:attribute", async (req, res) => {
         const allNames = await pool.query(
             "select email, username" +
             " from users" +
-            " where lower(email) like lower('%" + attribute + "%')" 
+            " where lower(email) like lower('%" + attribute + "%')"
         );
         console.log(allNames)
         res.json(allNames.rows);
@@ -228,10 +228,10 @@ router.post("/follow", async (req,res)=> {
     try{
         const username1 = req.body.username1;
         const username2 = req.body.username2;
-        
+
         const allNames = await pool.query(
             "INSERT INTO follow(followid,followedbyid)VALUES ($1,$2)",[username1,username2]
-           
+
         );
         res.json(allNames.rows);
     } catch(err) {
@@ -283,7 +283,7 @@ router.delete("/playlist/delete", async (req,res)=> {
                 return
             }
             const pp = await pool.query(
-                "DELETE FROM playlist_contains WHERE pid = $1",[pid] 
+                "DELETE FROM playlist_contains WHERE pid = $1",[pid]
             )
             const allNames = await pool.query(
                 "DELETE FROM playlist WHERE pid = $1",[pid]
@@ -291,8 +291,8 @@ router.delete("/playlist/delete", async (req,res)=> {
             res.json(allNames.rows);
 
         })
-        
-       
+
+
     } catch(err){
         console.log(err.message)
     }

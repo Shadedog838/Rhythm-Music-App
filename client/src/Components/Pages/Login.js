@@ -4,10 +4,11 @@ import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import Row from "react-bootstrap/Row";
-import { Link } from "react-router-dom";
-import { toast } from "react-toastify";
+import { json, Link } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-export default function Login() {
+export default function Login({ setAuth }) {
   const [validated, setValidated] = useState(false);
   const [inputs, setInputs] = useState({
     username: "",
@@ -23,31 +24,29 @@ export default function Login() {
     event.preventDefault();
     let form = event.currentTarget;
     if (form.checkValidity() === false) {
-      event.preventDefault();
       event.stopPropagation();
     }
     setValidated(true);
-    if (validated == true) {
-      try {
-        const body = { username, password };
-        const response = await fetch("http://localhost:5000/user/login", {
-          method: "POST",
-          headers: {
-            "Content-type": "application/json",
-          },
-          body: JSON.stringify(body),
-        });
-        const jsonData = await response.json();
-        if (response.status == 200) {
-          console.log("Log in successful");
-          setValidated(true);
-        } else {
-          console.log("Log in unsuccessful");
-          toast.error("PLease enter a valid username or password");
-        }
-      } catch (err) {
-        console.error(err.message);
+    try {
+      const body = { username, password };
+      const response = await fetch("http://localhost:5000/user/login", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
+      const jsonData = await response.json();
+      console.log(jsonData);
+      if (jsonData.message == "loggedin") {
+        localStorage.setItem("user", jsonData.username);
+        setAuth(true);
+      } else {
+        // console.log("Log in unsuccessful");
+        toast.error("Please enter a valid username or password");
       }
+    } catch (err) {
+      console.error(err.message);
     }
   };
 
@@ -74,7 +73,6 @@ export default function Login() {
                 name="username"
                 value={username}
                 placeholder="Username"
-                aria-describedby="inputGroupPrepend"
                 onChange={(e) => onChange(e)}
                 required
               />
@@ -92,17 +90,19 @@ export default function Login() {
             controlId="validationPassword"
           >
             <Form.Label>Password:</Form.Label>
-            <Form.Control
-              type="password"
-              placeholder="Password"
-              name="password"
-              value={password}
-              onChange={(e) => onChange(e)}
-              required
-            />
-            <Form.Control.Feedback type="invalid">
-              Please provide a valid password.
-            </Form.Control.Feedback>
+            <InputGroup hasValidation>
+              <Form.Control
+                type="password"
+                placeholder="Password"
+                name="password"
+                value={password}
+                onChange={(e) => onChange(e)}
+                required
+              />
+              <Form.Control.Feedback type="invalid">
+                Please provide a valid password.
+              </Form.Control.Feedback>
+            </InputGroup>
           </Form.Group>
         </Row>
         <div className="text-center">
@@ -114,6 +114,7 @@ export default function Login() {
           </p>
         </div>
       </Form>
+      <ToastContainer />
     </Fragment>
   );
 }

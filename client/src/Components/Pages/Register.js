@@ -5,18 +5,51 @@ import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import Row from "react-bootstrap/Row";
 import { Link } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 
-export default function Register() {
+export default function Register({setAuth}) {
   const [validated, setValidated] = useState(false);
+  const [inputs, setInputs] = useState({
+    firstname: "",
+    lastname: "",
+    username: "",
+    password: "",
+    email: "",
+  });
 
-  const handleSubmit = (event) => {
+  const { firstname, lastname, username, password, email } = inputs;
+
+  const onChange = (e) =>
+    setInputs({ ...inputs, [e.target.name]: e.target.value });
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
-      event.preventDefault();
       event.stopPropagation();
     }
-
     setValidated(true);
+
+    try {
+      const body = { firstname, lastname, username, password, email };
+      const response = await fetch("http://localhost:5000/user/register", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify(body),
+      });
+      const jsonData = await response.json();
+      console.log(jsonData);
+      if (jsonData.message == "created") {
+        localStorage.setItem("user", jsonData.username);
+        setAuth(true);
+      } else {
+        toast.error("Account failed to be created");
+      }
+    } catch (err) {
+      console.log(err.message);
+    }
   };
 
   return (
@@ -31,34 +64,56 @@ export default function Register() {
             controlId="validationFirstname"
           >
             <Form.Label>First name</Form.Label>
-            <Form.Control
-              required
-              type="text"
-              placeholder="First name"
-            />
-            <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+            <InputGroup hasValidation>
+              <Form.Control
+                required
+                type="text"
+                name="firstname"
+                placeholder="First name"
+                value={firstname}
+                onChange={(e) => onChange(e)}
+              />
+              <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+            </InputGroup>
           </Form.Group>
         </Row>
         <Row className="mb-3">
-          <Form.Group className="mx-auto" as={Col} md="4" controlId="validationLastname">
+          <Form.Group
+            className="mx-auto"
+            as={Col}
+            md="4"
+            controlId="validationLastname"
+          >
             <Form.Label>Last name</Form.Label>
-            <Form.Control
-              required
-              type="text"
-              placeholder="Last name"
-            />
-            <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+            <InputGroup hasValidation>
+              <Form.Control
+                required
+                type="text"
+                name="lastname"
+                placeholder="Last name"
+                value={lastname}
+                onChange={(e) => onChange(e)}
+              />
+              <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+            </InputGroup>
           </Form.Group>
         </Row>
 
         <Row className="mb-3">
-          <Form.Group className="mx-auto" as={Col} md="4" controlId="validationUsername">
+          <Form.Group
+            className="mx-auto"
+            as={Col}
+            md="4"
+            controlId="validationUsername"
+          >
             <Form.Label>Username</Form.Label>
             <InputGroup hasValidation>
               <Form.Control
                 type="text"
+                name="username"
                 placeholder="Username"
-                aria-describedby="inputGroupPrepend"
+                value={username}
+                onChange={(e) => onChange(e)}
                 required
               />
               <Form.Control.Feedback type="invalid">
@@ -68,30 +123,61 @@ export default function Register() {
           </Form.Group>
         </Row>
         <Row className="mb-3">
-          <Form.Group className="mx-auto" as={Col} md="4" controlId="validationPassword">
+          <Form.Group
+            className="mx-auto"
+            as={Col}
+            md="4"
+            controlId="validationPassword"
+          >
             <Form.Label>Password</Form.Label>
-            <Form.Control type="password" placeholder="Password" required />
-            <Form.Control.Feedback type="invalid">
-              Please provide a password.
-            </Form.Control.Feedback>
+            <InputGroup hasValidation>
+              <Form.Control
+                type="password"
+                name="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => onChange(e)}
+                required
+              />
+              <Form.Control.Feedback type="invalid">
+                Please provide a password.
+              </Form.Control.Feedback>
+            </InputGroup>
           </Form.Group>
         </Row>
         <Row className="mb-3">
-          <Form.Group className="mx-auto" as={Col} md="4" controlId="validationCustom04">
+          <Form.Group
+            className="mx-auto"
+            as={Col}
+            md="4"
+            controlId="validationCustom04"
+          >
             <Form.Label>Email</Form.Label>
-            <Form.Control type="email" placeholder="Email" required />
-            <Form.Control.Feedback type="invalid">
-              Please provide a valid email address.
-            </Form.Control.Feedback>
+            <InputGroup hasValidation>
+              <Form.Control
+                type="email"
+                name="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => onChange(e)}
+                required
+              />
+              <Form.Control.Feedback type="invalid">
+                Please provide a valid email address.
+              </Form.Control.Feedback>
+            </InputGroup>
           </Form.Group>
         </Row>
         <div className="text-center">
-          <Button className="btn btn-success btn-block w-25" type="submit">Register</Button>
+          <Button className="btn btn-success btn-block w-25" type="submit">
+            Register
+          </Button>
           <p className="text-white">
             Already have an account? <Link to="/login">login</Link>
           </p>
         </div>
       </Form>
+      <ToastContainer />
     </Fragment>
   );
 }

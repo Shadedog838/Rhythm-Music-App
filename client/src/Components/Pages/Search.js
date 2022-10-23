@@ -16,9 +16,7 @@ import "../assets/scss/MusicListContainer.scss";
 export default function Search() {
   const { state } = useLocation();
   if (!state) {
-    throw new Error(
-      `ERROR: State reached Dashboard with null 'state' in context`
-    );
+    window.location.reload();
   }
   const [songs, setSongs] = useState([]);
   const [attribute, setAttribute] = useState(state ? state.attribute : "");

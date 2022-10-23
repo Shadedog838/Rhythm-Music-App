@@ -1,5 +1,6 @@
 import React from "react";
 import { useEffect, useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import Search from "./Search";
 import { Skeleton } from "@material-ui/lab";
 import { ThemeContext } from "../../Theme";
@@ -19,11 +20,19 @@ const getCurrPage = (pathName) => {
   }
 };
 
-export default function Home() {
+export default function Home({setAuth}) {
+  const navigate = useNavigate();
   const [page, setCurrPage] = useState(<MusicListConatiner />);
-
+  const [username, setUsername] = useState("");
   let pathname = window.location.pathname;
   const useStyle = useContext(ThemeContext);
+
+  const getUsername = () => {
+    if (localStorage.getItem("user") === null) {
+      navigate("/login");
+    }
+    setUsername(localStorage.getItem("user"));
+  }
   useEffect(() => {
     setCurrPage(getCurrPage(pathname));
   }, [pathname]);
@@ -32,6 +41,7 @@ export default function Home() {
 
   useEffect(() => {
     setLoaded(true);
+    getUsername();
   }, []);
 
   return (
@@ -42,13 +52,14 @@ export default function Home() {
         </div>
       ) : (
         <>
-          <TopBar />
+          <TopBar username={username} setAuth={setAuth}/>
           <section className="home-music-container">
             <div className="sidebar-home">
               <SideBar />
             </div>
             <div className="main-home">{page}</div>
           </section>
+
         </>
       )}
     </div>

@@ -28,15 +28,16 @@ const pool = require("../db")
 router.get("/", async (req, res) => {
     try {
         const allNames = await pool.query(
-            "select s.title, a.name, al.name as album_name, s.length, count(p.sid) as Times_Played" +
+            "select s.title, a.name, al.name as album_name, s.length, g.name as genre, count(p.sid) as Times_Played" +
             " from artist as a, album as al, genre as g, song as s" +
             " LEFT JOIN plays as p on s.sid = p.sid" +
             " where s.artistid = a.artistid and s.albumid = al.albumid and s.genre_id = g.genreid" +
-            " GROUP BY (s.title, a.name, al.name, s.length)" +
+            " GROUP BY (s.title, a.name, al.name, s.length, g.name)" +
             " ORDER BY s.title, a.name ASC")
         res.json(allNames.rows);
     } catch (err) {
         console.log(err.message);
+        res.status(500).send("Server Error");
     }
 });
 
@@ -56,6 +57,7 @@ router.get("/sort/:attribute/:condition", async (req, res) => {
         res.json(allNames.rows);
     } catch (err) {
         console.log(err.message);
+        res.status(500).send("Server Error");
     }
 });
 
@@ -76,6 +78,7 @@ router.get("/search/:attribute/:condition", async (req, res) => {
         res.json(allNames.rows);
     } catch (err) {
         console.log(err.message);
+        res.status(500).send("Server Error");
     }
 });
 
@@ -90,6 +93,7 @@ router.post("/plays/", async(req,res)=> {
             res.json(allNames.rows);
         } catch (err) {
             console.log(err.message);
+            res.status(500).send("Server Error");
         }
 });
 
