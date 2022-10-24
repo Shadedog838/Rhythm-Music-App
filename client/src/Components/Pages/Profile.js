@@ -19,13 +19,14 @@ export default function Profile() {
       const response = await fetch(`http://localhost:5000/user/playlists/${username}`);
       const jsonData = await response.json();
       console.log(jsonData)
-      setPlaylists(jsonData);
+      if (jsonData.length != 0) {
+        setPlaylists(jsonData);
+      }
     } catch (err) {
       console.error(err.message);
     }
   }
 
-  const deletePlaylist = async ()
 
   useEffect(() => {
     getPlaylist();
