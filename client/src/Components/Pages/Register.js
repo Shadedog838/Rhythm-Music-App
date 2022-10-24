@@ -32,11 +32,11 @@ export default function Register({setAuth}) {
 
     try {
       const body = { firstname, lastname, username, password, email };
+      const myHeaders = new Headers();
+      myHeaders.append("Content-type", "application/json");
       const response = await fetch("http://localhost:5000/user/register", {
         method: "POST",
-        headers: {
-          "Content-type": "application/json",
-        },
+        headers: myHeaders,
         body: JSON.stringify(body),
       });
       const jsonData = await response.json();
@@ -45,7 +45,7 @@ export default function Register({setAuth}) {
         localStorage.setItem("user", jsonData.username);
         setAuth(true);
       } else {
-        toast.error("Account failed to be created");
+        toast.error("Account failed to be created user may already exist");
       }
     } catch (err) {
       console.log(err.message);

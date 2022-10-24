@@ -8,6 +8,7 @@ import MusicListConatiner from "../fragments/MusicListConatiner";
 import TopBar from "../fragments/TopBar";
 import SideBar from "../fragments/SideBar";
 import "../Pages/css/Home.scss";
+import Profile from "./Profile";
 
 const getCurrPage = (pathName) => {
   switch (pathName) {
@@ -15,12 +16,14 @@ const getCurrPage = (pathName) => {
       return <MusicListConatiner />;
     case "/home/search":
       return <Search />;
+    case "/home/profile":
+      return <Profile />;
     default:
       return null;
   }
 };
 
-export default function Home({setAuth}) {
+export default function Home({ setAuth }) {
   const navigate = useNavigate();
   const [page, setCurrPage] = useState(<MusicListConatiner />);
   const [username, setUsername] = useState("");
@@ -32,7 +35,7 @@ export default function Home({setAuth}) {
       navigate("/login");
     }
     setUsername(localStorage.getItem("user"));
-  }
+  };
   useEffect(() => {
     setCurrPage(getCurrPage(pathname));
   }, [pathname]);
@@ -52,14 +55,13 @@ export default function Home({setAuth}) {
         </div>
       ) : (
         <>
-          <TopBar username={username} setAuth={setAuth}/>
+          <TopBar username={username} setAuth={setAuth} />
           <section className="home-music-container">
             <div className="sidebar-home">
               <SideBar />
             </div>
             <div className="main-home">{page}</div>
           </section>
-
         </>
       )}
     </div>

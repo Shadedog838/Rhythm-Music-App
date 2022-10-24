@@ -68,7 +68,7 @@ router.post("/login", async (req, res) => {
         }
         // comparig password
         if( dataobj?.rowCount==1 && await bcrypt.compare(password,dataobj.rows[0].password)){
-            var date = new Date()
+            const date = new Date()
             pool.query("UPDATE users SET lastaccessdate=$1 where username=$2",[date.toISOString(),username], (error,response)=>{
                 if(error){
                     console.log(error)
@@ -77,6 +77,7 @@ router.post("/login", async (req, res) => {
                 res.status(200).json({"message":"loggedin","username":`${username}`})
             })
         }else{
+            console.log("vjndos");
             res.status(401).json({"message":"loginFailed"})
         }
     })
@@ -126,7 +127,7 @@ router.get("/playlists/:userId", async(req,res)=>{
             res.sendStatus(404)
             return;
         }
-        const playlistqueryString = `Select (pid , name) from playlist where username=$1`
+        const playlistqueryString = `Select pid , name as playlist_name from playlist where username=$1`
         pool.query(playlistqueryString,[req.params.userId],(error,listofplaylist)=>{
             if(error){
                 console.log(error)
@@ -134,10 +135,10 @@ router.get("/playlists/:userId", async(req,res)=>{
                 return
             }
             if(listofplaylist.rowCount < 1){
-                res.sendStatus(404)
+                res.status(404).send([])
                 return
             }
-            res.send(200).json(lisofplaylist.rows)
+            res.json(listofplaylist.rows);
         })
 
     })
@@ -155,7 +156,6 @@ router.put("/playlist/modifyname", (req,res)=>{
             return;
         }
         if(update.rowCount ==1){
-
             res.status(200).json(update.rows[0])
         }
     })

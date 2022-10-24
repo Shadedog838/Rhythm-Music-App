@@ -48,6 +48,10 @@ export default function MusicListConatiner() {
     setCondition(e.target.value);
   };
 
+  const addToPlaylist = () => {
+
+  }
+
   const handleSort = async () => {
     try {
       console.log(attribute, condition);

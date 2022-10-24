@@ -37,6 +37,7 @@ function App() {
           <Routes>
             <Route exact path="/" element={<Start />} />
             <Route path="/home/search" element={<Home />} />
+            <Route path="/home/profile" element={<Home />} />
             <Route
               exact
               path="/login"
@@ -60,6 +61,7 @@ function App() {
               }
             />
             <Route path="/home" element={<Home setAuth={setAuth} />} />
+
           </Routes>
         </Router>
       </>

@@ -29,11 +29,11 @@ export default function Login({ setAuth }) {
     setValidated(true);
     try {
       const body = { username, password };
+      const myHeaders = new Headers();
+      myHeaders.append("Content-type", "application/json");
       const response = await fetch("http://localhost:5000/user/login", {
         method: "POST",
-        headers: {
-          "Content-type": "application/json",
-        },
+        headers: myHeaders,
         body: JSON.stringify(body),
       });
       const jsonData = await response.json();
