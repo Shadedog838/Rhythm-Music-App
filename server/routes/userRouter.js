@@ -6,7 +6,6 @@
     * create user playlist
     * get all user's playlist
     * modfigy playlist name
-    * get user's playlist
     * get songs from specific playlist
     * add song to playlist
     * remove song from playlist
@@ -158,21 +157,24 @@ router.put("/playlist/modifyname", (req,res)=>{
             return;
         }
         if(update.rowCount ==1){
-            
             res.status(200).json(update.rows[0])
+            return;
         }
+        res.sendStatus(400)
     })
 
 
 })
-
 
 // get songs from specfic playslist id
 router.get("/playlist/:pid", async (req,res) =>{
     try{
         const pid = req.params.pid;
         const allNames = await pool.query(
-            "SELECT s.title FROM song as s WHERE sid = (SELECT sid FROM playlist_contains WHERE pid= " +pid+ ")" 
+            `SELECT p.name as Playlist_name,  s.title, s.length, s.releasedate,a.name as artist,al.name as album
+            from song as s, playlist_contains as pc, playlist as p, artist  as a,album as al
+            where p.pid=$1 and pc.pid = p.pid and pc.sid = s.sid and al.albumid = s.albumid and a.artistid=s.artistid
+            group by (p.name, a.name,al.name,s.title,s.length,s.releasedate,s.sid) order by s.title ASC`,[pid]
         );
         res.json(allNames.rows);
     } catch (err) {
@@ -192,6 +194,7 @@ router.post("/playlist/addsong", async (req, res) => {
         res.json(allNames.rows);
     } catch (err) {
         console.log(err.message);
+        res.sendStatus(500)
     }
 });
 
