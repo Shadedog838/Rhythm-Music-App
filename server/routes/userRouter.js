@@ -174,7 +174,7 @@ router.get("/playlist/:pid", async (req,res) =>{
             `SELECT p.name as Playlist_name,  s.title, s.length, s.releasedate,a.name as artist,al.name as album
             from song as s, playlist_contains as pc, playlist as p, artist  as a,album as al
             where p.pid=$1 and pc.pid = p.pid and pc.sid = s.sid and al.albumid = s.albumid and a.artistid=s.artistid
-            group by (p.name, a.name,al.name,s.title,s.length,s.releasedate,s.sid) order by s.title ASC`,[pid]
+            order by s.title ASC`,[pid]
         );
         res.json(allNames.rows);
     } catch (err) {
