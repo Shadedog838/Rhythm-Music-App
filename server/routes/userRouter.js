@@ -14,6 +14,7 @@
     * unfollow user
     * play whole playlist
     * delete playlist
+    * add album to playlist
     * delete album from playlist
 */
 const express = require("express");
@@ -330,6 +331,38 @@ router.delete("/playlist/delete", async (req, res) => {
     console.log(err.message);
   }
 });
+
+//add album to playlist ERROR CRASHES WHEN ADDING SONG ALREADY IN PL
+router.put("/playlist/album/add", async (req, res) => {
+  try {
+    const username = req.body.username;
+    const pid = req.body.pid;
+    const album = req.body.album;
+    pool.query(
+      "select * from playlist where username =$1 and pid=$2",
+      [username, pid],
+      async (error, value) => {
+        if (error) {
+          console.log(error);
+          res.sendStatus(500);
+          return;
+        }
+        if (value.rowCount == 0 || !value) {
+          res.sendStatus(401);
+          return;
+        }
+        const pp = await pool.query(
+          "INSERT INTO playlist_contains(pid,sid) select $1, sid from song as s where s.albumid=$2",
+      [pid, album]
+        );
+        res.json(pp.rows);
+      }
+    );
+  } catch (err) {
+    console.log(err.message);
+  }
+});
+
 
 //delete album from playlist
 router.delete("/playlist/album/delete", async (req, res) => {
