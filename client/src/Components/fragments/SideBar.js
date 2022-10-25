@@ -23,13 +23,13 @@ export default function SideBar() {
         <SideBarOptions
           className="nav-sub"
           Icon={AlbumIcon}
-          href={"/home/Albums"}
+          href={"/home/albums"}
           title={"Albums"}
         />
         <SideBarOptions
           className="nav-sub"
           Icon={PersonIcon}
-          href={"/home/Profile"}
+          href={"/home/profile"}
           title={"Profile"}
         />
       </div>
