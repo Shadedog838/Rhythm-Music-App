@@ -54,6 +54,8 @@ export default function Profile() {
               <thead>
                 <tr>
                   <th>Name</th>
+                  <th># Of Songs</th>
+                  <th>Total Duration</th>
                   <th>Edit</th>
                   <th>Delete</th>
                 </tr>
@@ -62,7 +64,9 @@ export default function Profile() {
                 {
                   playlists.map(playlist => (
                     <tr key={playlists.indexOf(playlist)}>
-                      <td>{playlist.playlist_name}</td>
+                      <td>{playlist.name}</td>
+                      <td>{playlist.total_songs}</td>
+                      <td>{playlist.total_time}</td>
                       <td><EditPlaylist playlist={playlist} username={username} /></td>
                       <td>
                         <button className="btn btn-danger">Delete</button>

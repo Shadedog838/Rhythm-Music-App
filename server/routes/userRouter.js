@@ -169,10 +169,12 @@ router.put("/playlist/modifyname", (req, res) => {
   const userName = req.body.username;
   const newName = req.body.newname;
   const previousName = req.body.playlistname;
-  const queryString = `update playlist set name=$1 where username=$2 AND name=$3 returning name;`;
+  const pid = req.body.pid;
+  console.log(userName, newName, previousName, pid);
+  const queryString = 'update playlist set name=$1 where username=$2 AND name=$3 AND pid=$4 returning name';
   pool.query(
     queryString,
-    [newName, userName, previousName],
+    [newName, userName, previousName, pid],
     (error, update) => {
       if (error) {
         res.sendStatus(500);
