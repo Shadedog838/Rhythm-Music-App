@@ -332,7 +332,7 @@ router.delete("/playlist/delete", async (req, res) => {
   }
 });
 
-//add album to playlist ERROR CRASHES WHEN ADDING SONG ALREADY IN PL
+//add album to playlist 
 router.put("/playlist/album/add", async (req, res) => {
   try {
     const username = req.body.username;
@@ -352,7 +352,8 @@ router.put("/playlist/album/add", async (req, res) => {
           return;
         }
         const pp = await pool.query(
-          "INSERT INTO playlist_contains(pid,sid) select $1, sid from song as s where s.albumid=$2",
+          `INSERT INTO playlist_contains(pid,sid) select $1, s.sid from song as s, playlist_contains as pc
+          where s.albumid=$2 EXCEPT select pc1.pid, pc1.sid FROM playlist_contains as pc1`,
       [pid, album]
         );
         res.json(pp.rows);
