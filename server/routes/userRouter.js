@@ -17,6 +17,7 @@
     * add album to playlist
     * delete album from playlist
     * get all followers
+    * get all users a specific user follows
 */
 const express = require("express");
 const router = express.Router();
@@ -414,5 +415,21 @@ router.get("/followers/:username", async (req, res) => {
     console.log(err.message);
   }
 });
+
+//get all a users follows
+router.get("/followedby/:username", async (req, res) => {
+  try {
+    const attribute = req.params.username;
+    console.log(attribute);
+    const allNames = await pool.query(
+      `select followid as follows from follow as f where followedbyid = $1`,[attribute]
+    );
+    
+    res.json(allNames.rows);
+  } catch (err) {
+    console.log(err.message);
+  }
+});
+
 
 module.exports = router;
