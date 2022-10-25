@@ -38,6 +38,7 @@ function App() {
             <Route exact path="/" element={<Start />} />
             <Route path="/home/search" element={<Home />} />
             <Route path="/home/profile" element={<Home />} />
+            <Route path="/home/albums" element={<Home />} />
             <Route
               exact
               path="/login"

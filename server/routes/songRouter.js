@@ -28,11 +28,11 @@ const pool = require("../db")
 router.get("/", async (req, res) => {
     try {
         const allNames = await pool.query(
-            "select s.title, a.name, al.name as album_name, s.length, g.name as genre, count(p.sid) as Times_Played" +
+            "select s.sid, s.title, a.name, al.name as album_name, s.length, g.name as genre, count(p.sid) as Times_Played" +
             " from artist as a, album as al, genre as g, song as s" +
             " LEFT JOIN plays as p on s.sid = p.sid" +
             " where s.artistid = a.artistid and s.albumid = al.albumid and s.genre_id = g.genreid" +
-            " GROUP BY (s.title, a.name, al.name, s.length, g.name)" +
+            " GROUP BY (s.sid, s.title, a.name, al.name, s.length, g.name)" +
             " ORDER BY s.title, a.name ASC")
         res.json(allNames.rows);
     } catch (err) {
@@ -47,11 +47,11 @@ router.get("/sort/:attribute/:condition", async (req, res) => {
     try {
         const { attribute , condition} = req.params;
         const allNames = await pool.query(
-            "select s.title, a.name, al.name as album_name, s.length, g.name as genre, extract (year from s.releasedate) as year, count(p.sid) as Times_Played" +
+            "select s.sid, s.title, a.name, al.name as album_name, s.length, g.name as genre, extract (year from s.releasedate) as year, count(p.sid) as Times_Played" +
             " from artist as a, album as al, genre as g, song as s" +
             " LEFT JOIN plays as p on s.sid = p.sid" +
             " where s.artistid = a.artistid and s.albumid = al.albumid and s.genre_id = g.genreid" +
-            " GROUP BY (s.title, a.name, al.name, s.length, g.name, s.releasedate)" +
+            " GROUP BY (s.sid, s.title, a.name, al.name, s.length, g.name, s.releasedate)" +
             " ORDER BY " + attribute + " " + condition
         );
         res.json(allNames.rows);
@@ -68,11 +68,11 @@ router.get("/search/:attribute/:condition", async (req, res) => {
         const { attribute , condition} = req.params;
 
         const allNames = await pool.query(
-            "select s.title, a.name, al.name as album_name, s.length, count(p.sid) as Times_Played" +
+            "select s.sid, s.title, a.name, al.name as album_name, s.length, count(p.sid) as Times_Played" +
             " from artist as a, album as al, genre as g, song as s" +
             " LEFT JOIN plays as p on s.sid = p.sid" +
             " where s.artistid = a.artistid and s.albumid = al.albumid and s.genre_id = g.genreid and lower(" + attribute + ") like lower('%" + condition + "%')" +
-            " GROUP BY (s.title, a.name, al.name, s.length) " +
+            " GROUP BY (s.sid, s.title, a.name, al.name, s.length) " +
             " ORDER BY s.title, a.name ASC"
         );
         res.json(allNames.rows);
@@ -82,7 +82,7 @@ router.get("/search/:attribute/:condition", async (req, res) => {
     }
 });
 
-router.post("/plays/", async(req,res)=> {
+router.post("/plays", async(req,res)=> {
     try {
         const username = req.body.username;
         const sid = req.body.sid;
@@ -97,10 +97,10 @@ router.post("/plays/", async(req,res)=> {
         }
 });
 
-router.get("/albums/", async (req, res) => {
+router.get("/albums", async (req, res) => {
     try {
         const allNames = await pool.query(
-            "select al.name as album, a.name as artist, al.id as album_id, as artist FROM artist as a, album as al WHERE al.artistid = a.artistid" 
+            "select al.name as album, a.name as artist, al.albumid as album_id FROM artist as a, album as al WHERE al.artistid = a.artistid"
         );
         console.log(allNames)
         res.json(allNames.rows);
@@ -109,10 +109,10 @@ router.get("/albums/", async (req, res) => {
     }
 });
 
-// get all the songs and its info 
+// get all the songs and its info
 router.get("/album/:id", async(req,res)=>{
     const albumid = req.params.id
-    const query = `select al.albumid, al.name as album_name, a.name as aritist_name, s.title, s.length,s.releasedate 
+    const query = `select al.albumid, al.name as album_name, a.name as aritist_name, s.title, s.length,s.releasedate
                     from album as al, artist as a, song as s
                     where al.albumid = s.albumid and al.albumid = $1 and al.artistid=a.artistid`
     pool.query(query,[albumid], (error, val)=>{

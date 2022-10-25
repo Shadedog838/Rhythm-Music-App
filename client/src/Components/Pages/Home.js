@@ -9,6 +9,7 @@ import TopBar from "../fragments/TopBar";
 import SideBar from "../fragments/SideBar";
 import "../Pages/css/Home.scss";
 import Profile from "./Profile";
+import Album from "./Album";
 
 const getCurrPage = (pathName) => {
   switch (pathName) {
@@ -18,6 +19,8 @@ const getCurrPage = (pathName) => {
       return <Search />;
     case "/home/profile":
       return <Profile />;
+    case "/home/albums":
+      return <Album />
     default:
       return null;
   }

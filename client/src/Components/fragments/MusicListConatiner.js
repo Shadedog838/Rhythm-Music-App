@@ -3,20 +3,25 @@ import { Fragment } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Dropdown from "react-bootstrap/Dropdown";
 import {
   solid,
   regular,
   brands,
   icon,
 } from "@fortawesome/fontawesome-svg-core/import.macro";
+import { ToastContainer, toast } from "react-toastify";
 
 import "../assets/scss/MusicListContainer.scss";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function MusicListConatiner() {
   const [songs, setSongs] = useState([]);
+  const [playlists, setPlaylists] = useState([]);
   const [limit, setLimit] = useState(10);
   const [attribute, setAttribute] = useState("s.title");
   const [condition, setCondition] = useState("ASC");
+  const [username, setUsername] = useState(localStorage.getItem("user"));
 
   const getSongs = async () => {
     try {
@@ -25,6 +30,21 @@ export default function MusicListConatiner() {
       setSongs(jsonDate);
     } catch (err) {
       console.error(err.message);
+    }
+  };
+
+  const getPlaylist = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/user/playlists/${username}`
+      );
+      const jsonData = await response.json();
+      console.log(jsonData);
+      if (jsonData.length != 0) {
+        setPlaylists(jsonData);
+      }
+    } catch (err) {
+      console.log(err.message);
     }
   };
 
@@ -48,18 +68,16 @@ export default function MusicListConatiner() {
     setCondition(e.target.value);
   };
 
-  const addToPlaylist = () => {
-
-  }
-
   const handleSort = async () => {
     try {
       console.log(attribute, condition);
       if (attribute !== "" && condition !== "") {
         const body = { attribute, condition };
-        const response = await fetch(`http://localhost:5000/song/sort/${attribute}/${condition}`);
+        const response = await fetch(
+          `http://localhost:5000/song/sort/${attribute}/${condition}`
+        );
         const jsonData = await response.json();
-        console.log(jsonData)
+        console.log(jsonData);
         setSongs(jsonData);
       }
     } catch (err) {
@@ -71,11 +89,41 @@ export default function MusicListConatiner() {
     setLimit(limit + 10);
   };
 
+  const playSong = async (sid) => {
+    const body = { username, sid };
+    const myHeaders = new Headers();
+    myHeaders.append("Content-type", "application/json");
+    try {
+      const response = await fetch("http://localhost:5000/song/plays", {
+        method: "POST",
+        headers: myHeaders,
+        body: JSON.stringify(body),
+      });
+      const jsonData = await response.json();
+      // console.log(jsonData);
+      toast.success("Song data has been recorded");
+      setTimeout(2000);
+      getSongs();
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
+  const addToPlaylist = async (pid, sid) => {
+    
+
+  }
+
+
   useEffect(() => {
     getSongs();
   }, []);
 
-  // console.log(songs);
+  useEffect(() => {
+    getPlaylist();
+  }, []);
+
+  console.log(songs);
   return (
     <>
       {songs.length !== 0 ? (
@@ -94,7 +142,10 @@ export default function MusicListConatiner() {
                 <option value="year">Realese Year</option>
               </Form.Select>
               <h4 className="m-2">From:</h4>
-              <Form.Select className="select-two m-2" onChange={handleCondition}>
+              <Form.Select
+                className="select-two m-2"
+                onChange={handleCondition}
+              >
                 <option>Choose the order</option>
                 <option value="ASC">Ascending</option>
                 <option value="DESC">Descending</option>
@@ -131,11 +182,28 @@ export default function MusicListConatiner() {
                       <td>{song.genre}</td>
                       <td>{convertMsToMinuteSeconds(song.length)}</td>
                       <td>{song.times_played}</td>
-                      <td>
-                        <FontAwesomeIcon icon={solid("play-circle")} />
+                      <td className="pointer">
+                        <FontAwesomeIcon
+                          onClick={() => playSong(song.sid)}
+                          icon={solid("play-circle")}
+                        />
                       </td>
                       <td>
-                        <FontAwesomeIcon icon={solid("plus-square")} />
+                        <Dropdown>
+                          <Dropdown.Toggle
+                            className="pointer"
+                            variant="success"
+                          >
+                            <FontAwesomeIcon icon={solid("plus-square")} />
+                          </Dropdown.Toggle>
+                          <Dropdown.Menu>
+                            {playlists.map((playlist) => (
+                              <Dropdown.Item onClick={() => addToPlaylist(playlist.pid, song.sid)} key={playlists.indexOf(playlist)}>
+                                {playlist.name}
+                              </Dropdown.Item>
+                            ))}
+                          </Dropdown.Menu>
+                        </Dropdown>
                       </td>
                     </tr>
                   ))}
@@ -154,6 +222,7 @@ export default function MusicListConatiner() {
       ) : (
         <h2>No result to display!</h2>
       )}
+      <ToastContainer />
     </>
   );
 }
