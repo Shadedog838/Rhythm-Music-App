@@ -16,6 +16,7 @@
     * delete playlist
     * add album to playlist
     * delete album from playlist
+    * get all followers
 */
 const express = require("express");
 const router = express.Router();
@@ -394,6 +395,21 @@ router.delete("/playlist/album/delete", async (req, res) => {
         res.json(pp.rows);
       }
     );
+  } catch (err) {
+    console.log(err.message);
+  }
+});
+
+//get all followers
+router.get("/followers/:username", async (req, res) => {
+  try {
+    const attribute = req.params.username;
+    console.log(attribute);
+    const allNames = await pool.query(
+      `select followedbyid as followers from follow as f where followid = $1`,[attribute]
+    );
+    
+    res.json(allNames.rows);
   } catch (err) {
     console.log(err.message);
   }
