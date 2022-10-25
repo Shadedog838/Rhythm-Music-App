@@ -109,11 +109,27 @@ export default function MusicListConatiner() {
     }
   };
 
-  const addToPlaylist = async (pid, sid) => {
-    
-
-  }
-
+  const addToPlaylist = async (pid, sid, name) => {
+    const body = { pid, sid };
+    const myHeaders = new Headers();
+    myHeaders.append("Content-type", "application/json");
+    try {
+      const response = await fetch(
+        "http://localhost:5000/user/playlist/addsong",
+        {
+          method: "POST",
+          headers: myHeaders,
+          body: JSON.stringify(body),
+        }
+      );
+      const jsonData = await response.json();
+      console.log(jsonData);
+      toast.success("Song has been added to " + name);
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+  
 
   useEffect(() => {
     getSongs();
@@ -198,7 +214,12 @@ export default function MusicListConatiner() {
                           </Dropdown.Toggle>
                           <Dropdown.Menu>
                             {playlists.map((playlist) => (
-                              <Dropdown.Item onClick={() => addToPlaylist(playlist.pid, song.sid)} key={playlists.indexOf(playlist)}>
+                              <Dropdown.Item
+                                onClick={() =>
+                                  addToPlaylist(playlist.pid, song.sid, playlist.name)
+                                }
+                                key={playlists.indexOf(playlist)}
+                              >
                                 {playlist.name}
                               </Dropdown.Item>
                             ))}

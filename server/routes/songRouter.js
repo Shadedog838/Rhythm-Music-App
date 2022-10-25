@@ -102,7 +102,7 @@ router.get("/albums", async (req, res) => {
         const allNames = await pool.query(
             "select al.name as album, a.name as artist, al.albumid as album_id FROM artist as a, album as al WHERE al.artistid = a.artistid"
         );
-        console.log(allNames)
+        // console.log(allNames)
         res.json(allNames.rows);
     } catch (err) {
         console.log(err.message);

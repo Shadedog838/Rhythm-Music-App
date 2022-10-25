@@ -1,5 +1,6 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Dropdown from "react-bootstrap/Dropdown";
 import {
   solid,
   regular,
@@ -12,6 +13,7 @@ import Button from "react-bootstrap/Button";
 export default function Album() {
   const [albums, setAlbums] = useState([]);
   const [limit, setLimit] = useState(10);
+  const [playlists, setPlaylists] = useState([]);
 
   const getAlbums = async () => {
     try {

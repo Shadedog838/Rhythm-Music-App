@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { Fragment } from "react";
 import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
+import Dropdown from "react-bootstrap/Dropdown";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   solid,
@@ -10,8 +10,10 @@ import {
   brands,
   icon,
 } from "@fortawesome/fontawesome-svg-core/import.macro";
+import { ToastContainer, toast } from "react-toastify";
 
 import "../assets/scss/MusicListContainer.scss";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Search() {
   const { state } = useLocation();
@@ -19,9 +21,11 @@ export default function Search() {
     window.location.reload();
   }
   const [songs, setSongs] = useState([]);
+  const [playlists, setPlaylists] = useState([]);
   const [attribute, setAttribute] = useState(state ? state.attribute : "");
   const [condition, setCondition] = useState(state ? state.condition : "");
   const [limit, setLimit] = useState(10);
+  const [username, setUsername] = useState(localStorage.getItem("user"));
 
   const getSongs = async () => {
     try {
@@ -31,6 +35,21 @@ export default function Search() {
       );
       const jsonData = await response.json();
       setSongs(jsonData);
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
+  const getPlaylist = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/user/playlists/${username}`
+      );
+      const jsonData = await response.json();
+      console.log(jsonData);
+      if (jsonData.length != 0) {
+        setPlaylists(jsonData);
+      }
     } catch (err) {
       console.log(err.message);
     }
@@ -52,6 +71,47 @@ export default function Search() {
     setLimit(limit + 10);
   };
 
+  const playSong = async (sid) => {
+    const body = { username, sid };
+    const myHeaders = new Headers();
+    myHeaders.append("Content-type", "application/json");
+    try {
+      const response = await fetch("http://localhost:5000/song/plays", {
+        method: "POST",
+        headers: myHeaders,
+        body: JSON.stringify(body),
+      });
+      const jsonData = await response.json();
+      // console.log(jsonData);
+      toast.success("Song data has been recorded");
+      setTimeout(2000);
+      getSongs();
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
+  const addToPlaylist = async (pid, sid, name) => {
+    const body = { pid, sid };
+    const myHeaders = new Headers();
+    myHeaders.append("Content-type", "application/json");
+    try {
+      const response = await fetch(
+        "http://localhost:5000/user/playlist/addsong",
+        {
+          method: "POST",
+          headers: myHeaders,
+          body: JSON.stringify(body),
+        }
+      );
+      const jsonData = await response.json();
+      console.log(jsonData);
+      toast.success("Song has been added to " + name);
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
   useEffect(() => {
     console.log("State updated" + state.attribute + " " + state.condition);
     setAttribute(state ? state.attribute : "");
@@ -61,6 +121,10 @@ export default function Search() {
   useEffect(() => {
     getSongs();
   }, [attribute, condition]);
+
+  useEffect(() => {
+    getPlaylist()
+  }, [])
 
   return (
     <>
@@ -92,10 +156,36 @@ export default function Search() {
                       <td>{convertMsToMinuteSeconds(song.length)}</td>
                       <td>{song.times_played}</td>
                       <td>
-                        <FontAwesomeIcon icon={solid("play-circle")} />
+                        <FontAwesomeIcon
+                          onClick={() => playSong(song.sid)}
+                          icon={solid("play-circle")}
+                        />
                       </td>
                       <td>
-                        <FontAwesomeIcon icon={solid("plus-square")} />
+                        <Dropdown>
+                          <Dropdown.Toggle
+                            className="pointer"
+                            variant="success"
+                          >
+                            <FontAwesomeIcon icon={solid("plus-square")} />
+                          </Dropdown.Toggle>
+                          <Dropdown.Menu>
+                            {playlists.map((playlist) => (
+                              <Dropdown.Item
+                                onClick={() =>
+                                  addToPlaylist(
+                                    playlist.pid,
+                                    song.sid,
+                                    playlist.name
+                                  )
+                                }
+                                key={playlists.indexOf(playlist)}
+                              >
+                                {playlist.name}
+                              </Dropdown.Item>
+                            ))}
+                          </Dropdown.Menu>
+                        </Dropdown>
                       </td>
                     </tr>
                   ))}
@@ -114,6 +204,7 @@ export default function Search() {
       ) : (
         <h2>No result to display!</h2>
       )}
+      <ToastContainer />
     </>
   );
 }
