@@ -336,7 +336,7 @@ router.delete("/playlist/album/delete", async (req, res) => {
   try {
     const username = req.body.username;
     const pid = req.body.pid;
-    const album = req.body.album
+    const album = req.body.album;
     pool.query(
       "select * from playlist where username =$1 and pid=$2",
       [username, pid],
