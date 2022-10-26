@@ -68,11 +68,11 @@ router.get("/search/:attribute/:condition", async (req, res) => {
         const { attribute , condition} = req.params;
 
         const allNames = await pool.query(
-            "select s.sid, s.title, a.name, al.name as album_name, s.length, count(p.sid) as Times_Played" +
+            "select s.sid, s.title, a.name, al.name as album_name, s.length, g.name as genre, count(p.sid) as Times_Played" +
             " from artist as a, album as al, genre as g, song as s" +
             " LEFT JOIN plays as p on s.sid = p.sid" +
             " where s.artistid = a.artistid and s.albumid = al.albumid and s.genre_id = g.genreid and lower(" + attribute + ") like lower('%" + condition + "%')" +
-            " GROUP BY (s.sid, s.title, a.name, al.name, s.length) " +
+            " GROUP BY (s.sid, s.title, a.name, al.name, s.length, g.name) " +
             " ORDER BY s.title, a.name ASC"
         );
         res.json(allNames.rows);

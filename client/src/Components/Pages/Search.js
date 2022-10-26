@@ -34,6 +34,7 @@ export default function Search() {
         `http://localhost:5000/song/search/${attribute}/${condition}`
       );
       const jsonData = await response.json();
+      console.log(jsonData)
       setSongs(jsonData);
     } catch (err) {
       console.log(err.message);
