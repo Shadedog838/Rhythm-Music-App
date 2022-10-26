@@ -106,6 +106,7 @@ export default function MusicListConatiner() {
       getSongs();
     } catch (err) {
       console.error(err.message);
+      toast.error("Something went wrong!");
     }
   };
 
