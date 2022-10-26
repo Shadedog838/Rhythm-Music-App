@@ -53,13 +53,35 @@ export default function Profile() {
     }
   };
 
-  const getFollowers = async() => {
+  const getFollowers = async () => {
     try {
-
+      const response = await fetch(
+        `http://localhost:5000/user/followers/${username}`
+      );
+      const jsonData = await response.json();
+      console.log(jsonData);
+      if (jsonData.length != 0) {
+        setFollowers(jsonData);
+      }
     } catch (err) {
       console.error(err.message);
     }
-  }
+  };
+
+  const getFollowing = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/user/followedby/${username}`
+      );
+      const jsonData = await response.json();
+      console.log(jsonData);
+      if (jsonData.length != 0) {
+        setFollowing(jsonData);
+      }
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
 
   useEffect(() => {
     getPlaylist();
@@ -67,8 +89,7 @@ export default function Profile() {
 
   useEffect(() => {
     getFollowers();
-  //   getFollowing();
-  }, [])
+  }, []);
 
   return (
     <Fragment>
@@ -121,9 +142,22 @@ export default function Profile() {
               </tbody>
             </table>
           </div>
-          <div className="container mt-2" >
-            <h3>Followers/Following</h3>
-
+          <div className="container mt-2">
+            <h3>Followers</h3>
+            <table border="1" frame="void" rules="rows">
+              <thead>
+                <tr>
+                  <th>Followers</th>
+                </tr>
+              </thead>
+              <tbody>
+                {followers.map((follower) => {
+                  <tr key={followers.indexOf(follower)}>
+                    <td>{follower.follows}</td>
+                  </tr>;
+                })}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

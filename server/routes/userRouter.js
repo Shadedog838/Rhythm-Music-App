@@ -334,7 +334,7 @@ router.delete("/playlist/delete", async (req, res) => {
   }
 });
 
-//add album to playlist 
+//add album to playlist
 router.put("/playlist/album/add", async (req, res) => {
   try {
     const username = req.body.username;
@@ -409,7 +409,7 @@ router.get("/followers/:username", async (req, res) => {
     const allNames = await pool.query(
       `select followedbyid as followers from follow as f where followid = $1`,[attribute]
     );
-    
+
     res.json(allNames.rows);
   } catch (err) {
     console.log(err.message);
@@ -424,7 +424,7 @@ router.get("/followedby/:username", async (req, res) => {
     const allNames = await pool.query(
       `select followid as follows from follow as f where followedbyid = $1`,[attribute]
     );
-    
+
     res.json(allNames.rows);
   } catch (err) {
     console.log(err.message);
