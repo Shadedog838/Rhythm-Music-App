@@ -95,7 +95,6 @@ router.post("/login", async (req, res) => {
         }
       );
     } else {
-      console.log("vjndos");
       res.status(401).json({ message: "loginFailed" });
     }
   });
@@ -195,7 +194,7 @@ router.get("/playlist/:pid", async (req, res) => {
   try {
     const pid = req.params.pid;
     const allNames = await pool.query(
-      `SELECT s.sid, s.title, s.length, al.name as album_name, al.albumid as albumid, a.name as artist FROM song as s, artist as a, album as al
+      `SELECT s.sid, s.title, s.length, al.name as album_name, a.name as artist FROM song as s, artist as a, album as al
       WHERE a.artistid = s.artistid AND s.albumid = al.albumid AND sid = ANY(SELECT sid FROM playlist_contains WHERE pid= $1)`,[pid]
     );
     res.json(allNames.rows);

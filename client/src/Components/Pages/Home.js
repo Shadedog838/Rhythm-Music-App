@@ -11,6 +11,7 @@ import "../Pages/css/Home.scss";
 import Profile from "./Profile";
 import Album from "./Album";
 import PlaylistSongs from "./PlaylistSongs";
+import AlbumSongs from "./AlbumSongs";
 
 const getCurrPage = (pathName) => {
   switch (pathName) {
@@ -24,6 +25,8 @@ const getCurrPage = (pathName) => {
       return <Album />
     case "/home/profile/playlist":
       return <PlaylistSongs />
+    case "/home/album/songs":
+      return <AlbumSongs />
     default:
       return null;
   }

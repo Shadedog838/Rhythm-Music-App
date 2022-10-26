@@ -1,6 +1,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Dropdown from "react-bootstrap/Dropdown";
+import { Link } from "react-router-dom";
 import {
   solid,
   regular,
@@ -91,7 +92,11 @@ export default function Album() {
                 .filter((album) => albums.indexOf(album) < limit)
                 .map((album) => (
                   <tr key={albums.indexOf(album)}>
-                    <td>{album.album}</td>
+                    <td>
+                      <Link className="text-white" to={"/home/album/songs"} state={album}>
+                        {album.album}
+                      </Link>
+                    </td>
                     <td>{album.artist}</td>
                     <td>
                       <Dropdown>

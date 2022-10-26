@@ -6,7 +6,7 @@ import { PlaylistPlay } from "@material-ui/icons";
 import CreatePlaylist from "../fragments/CreatePlaylist";
 import EditPlaylist from "../fragments/EditPlaylist";
 import Button from "react-bootstrap/Button";
-import { json, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -135,7 +135,6 @@ export default function Profile() {
         setTimeout(2000);
         window.location = "/home/profile";
       } catch (err) {
-        console.log("vsjvsloj")
         toast.error("You already follow " + username2);
         console.error(err.message);
       }
@@ -203,7 +202,7 @@ export default function Profile() {
                 {playlists.map((playlist) => (
                   <tr key={playlists.indexOf(playlist)}>
                     <td>
-                      <Link className="text-decoration-none text-white" to={"/home/profile/playlist"} state={playlist}>
+                      <Link className="text-white" to={"/home/profile/playlist"} state={playlist}>
                         {playlist.name}
                       </Link>
                     </td>
