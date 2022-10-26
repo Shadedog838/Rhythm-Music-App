@@ -13,7 +13,8 @@ app.use(cors());
 
 //app.use("/user", require("./routes/userRouter"));
 app.use("/song", require("./routes/songRouter"));
-app.use("/user", require("./routes/userRouter"))
+app.use("/user", require("./routes/userRouter"));
+app.use("/playlist", require("./routes/playlistRouter"));
 
 // Start listening on the specified port
 app.listen(port, () => {
