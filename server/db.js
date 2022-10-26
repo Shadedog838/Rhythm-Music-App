@@ -57,9 +57,10 @@ const connect = async () => {
         port: 22,
         dstPort: db_port,
         localPort: db_port_local,
+        keepAlive: true
     };
 
-    tunnel(
+    ssh_tunnel = tunnel(
         tunnel_config,
         async (err, server) => {
             if (err) {
@@ -67,7 +68,6 @@ const connect = async () => {
                 return err;
             }
             console.log('SSH tunnel established.');
-            ssh_tunnel = server;
         }
     );
 }
@@ -75,6 +75,21 @@ const connect = async () => {
 const pool = new Pool({
     connectionString: `postgres://${db_username}:${db_password}@127.0.0.1:${db_port_local}/${db_name}`
 });
+
+pool.on('error', (err, client) => {
+    console.log('An error occured with connection pool.');
+    console.log('err:', err);
+    console.log('client:', client);
+})
+
+pool.on('acquire', (client) => {
+    console.log('Acquired new client.');
+    console.log(`[pool status] idle: ${pool.idleCount}, total: ${pool.totalCount}`)
+})
+
+pool.on('remove', (client) => {
+    console.log('Removed a client.');
+})
 
 // Closes the ssh connection to the server.
 // const disconnect = async () => {

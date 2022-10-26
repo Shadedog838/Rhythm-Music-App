@@ -82,19 +82,23 @@ router.get("/search/:attribute/:condition", async (req, res) => {
     }
 });
 
-router.post("/plays", async(req,res)=> {
+router.post("/plays", async(req,res) => {
+    let client;
     try {
         const username = req.body.username;
         const sid = req.body.sid;
         const date = new Date();
-        const allNames = await pool.query(
+        client = await pool.connect();
+        const allNames = await client.query(
             "INSERT INTO plays(username,sid,datetimeplayed)VALUES ($1,$2,$3)",[username,sid, date.toISOString()]
         );
-            res.json(allNames.rows);
-        } catch (err) {
-            console.log(err.message);
-            res.status(500).send("Server Error");
-        }
+        res.json(allNames.rows);
+    } catch (err) {
+        console.log('Error in /plays');
+        console.log(err.message);
+        res.status(500).send("Server Error");
+    }
+    if (client) client.release();
 });
 
 router.get("/albums", async (req, res) => {
