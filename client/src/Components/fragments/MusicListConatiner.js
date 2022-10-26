@@ -103,7 +103,7 @@ export default function MusicListConatiner() {
       // console.log(jsonData);
       toast.success("Song data has been recorded");
       setTimeout(2000);
-      getSongs();
+      handleSort();
     } catch (err) {
       console.error(err.message);
       toast.error("Something went wrong!");

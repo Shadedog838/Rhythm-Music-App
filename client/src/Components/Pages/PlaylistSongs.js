@@ -19,7 +19,7 @@ export default function PlaylistSongs() {
   if (!state) {
     window.location.reload();
   }
-  const [update , setUpdate] = useState(false);
+  const [update, setUpdate] = useState(false);
   const [playlist, setPlaylist] = useState(state ? state : null);
   const [songs, setSongs] = useState([]);
   const [username, setUsername] = useState(localStorage.getItem("user"));
@@ -70,19 +70,17 @@ export default function PlaylistSongs() {
     }
   };
 
-  const playAllSongs = async() => {
-    const pid = playlist.pid
-    const body = { username, pid}
+  const playAllSongs = async () => {
+    const pid = playlist.pid;
+    const body = { username, pid };
     const myHeaders = new Headers();
     myHeaders.append("Content-type", "application/json");
     try {
-      const response = await fetch("http://localhost:5000/user/playlist/play",
-        {
-          method: "POST",
-          headers: myHeaders,
-          body: JSON.stringify(body)
-        }
-      )
+      const response = await fetch("http://localhost:5000/user/playlist/play", {
+        method: "POST",
+        headers: myHeaders,
+        body: JSON.stringify(body),
+      });
       const jsonData = await response;
       toast.success("Song data has been recorded");
       setUpdate(true);
@@ -90,7 +88,29 @@ export default function PlaylistSongs() {
       toast.error("Something went wrong!");
       console.error(err.message);
     }
-  }
+  };
+
+  const deleteSong = async (sid) => {
+    const pid = playlist.pid;
+    console.log(pid, sid);
+    const body = { pid, sid };
+    const myHeaders = new Headers();
+    myHeaders.append("Content-type", "application/json");
+    try {
+      const response = await fetch(
+        "http://localhost:5000/user/playlist/deletesong",
+        {
+          method: "DELETE",
+          headers: myHeaders,
+          body: JSON.stringify(body),
+        }
+      );
+      const jsonData = await response.json();
+      getSongs();
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
 
   useEffect(() => {
     getSongs();
@@ -111,7 +131,9 @@ export default function PlaylistSongs() {
         </div>
         <div className="bottom-playlist">
           <div className="container">
-            <Button className="btn btn-success mb-2" onClick={playAllSongs}>Play all Songs</Button>
+            <Button className="btn btn-success mb-2" onClick={playAllSongs}>
+              Play all Songs
+            </Button>
             <table border="1" frame="void" rules="rows">
               <thead>
                 <tr>
@@ -120,6 +142,7 @@ export default function PlaylistSongs() {
                   <th>Album</th>
                   <th>Length</th>
                   <th>Play</th>
+                  <th>Delete</th>
                 </tr>
               </thead>
               <tbody>
@@ -134,6 +157,14 @@ export default function PlaylistSongs() {
                         onClick={() => playSong(song.sid)}
                         icon={solid("play-circle")}
                       />
+                    </td>
+                    <td>
+                      <button
+                        onClick={() => deleteSong(song.sid)}
+                        className="btn btn-danger"
+                      >
+                        Delete
+                      </button>
                     </td>
                   </tr>
                 ))}

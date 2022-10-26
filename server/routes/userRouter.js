@@ -5,7 +5,7 @@
     * login user
     * create user playlist
     * get all user's playlist
-    * modfigy playlist name
+    * modify playlist name
     * get songs from specific playlist
     * add song to playlist
     * remove song from playlist
@@ -219,7 +219,7 @@ router.post("/playlist/addsong", async (req, res) => {
 });
 
 // remove song from playlist
-router.delete("playlist/deletesong", async (req, res) => {
+router.delete("/playlist/deletesong", async (req, res) => {
   try {
     const pid = req.body.pid;
     const songID = req.body.sid;
@@ -282,7 +282,21 @@ router.delete("/unfollow", async (req, res) => {
     console.log(err.message);
   }
 });
-
+// play whole album
+router.post("/album/play", async (req, res) => {
+  try {
+    const username = req.body.username;
+    const albumid = req.body.albumid;
+    const date = new Date();
+    const allNames = await pool.query(
+      "INSERT INTO plays(username, sid, datetimeplayed) select $1, sid, $3 from song where albumid = $2",
+      [username, albumid, date.toISOString()]
+    );
+    res.json(allNames.rows);
+  } catch (err) {
+    console.log(err.message);
+  }
+})
 //play whole playlist
 router.post("/playlist/play", async (req, res) => {
   try {

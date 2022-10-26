@@ -63,9 +63,8 @@ export default function Profile() {
         }
       );
       const jsonData = await response.json();
-      console.log(jsonData);
-      // toast.success(name + " has been deleted!");
-      window.location = "/home/profile";
+      // window.location = "/home/profile";
+      getPlaylist();
     } catch (err) {
       console.error(err.message);
     }
@@ -118,7 +117,7 @@ export default function Profile() {
   };
 
   const followUser = async (username1, username2, user) => {
-    if (following.filter(e => e.follows === username1).length > 0) {
+    if (following.filter((e) => e.follows === username1).length > 0) {
       toast.error("You already follow " + username1);
     } else {
       try {
@@ -131,11 +130,11 @@ export default function Profile() {
           body: JSON.stringify(body),
         });
         const jsonData = await response;
-        toast.success("You are now following " + username2);
+        toast.success("You are now following " + username1);
         setTimeout(2000);
-        window.location = "/home/profile";
+        getFollowing();
       } catch (err) {
-        toast.error("You already follow " + username2);
+        toast.error("You already follow " + username1);
         console.error(err.message);
       }
     }
@@ -152,8 +151,13 @@ export default function Profile() {
         body: JSON.stringify(body),
       });
       const jsonData = await response;
-      setTimeout(2000);
-      window.location = "/home/profile";
+      toast.success("Unfollowed " + username1);
+      setTimeout(5000);
+      if (following.length < 2) {
+        window.location.reload();
+      } else {
+        getFollowing();
+      }
     } catch (err) {
       console.error(err.message);
     }
@@ -202,7 +206,11 @@ export default function Profile() {
                 {playlists.map((playlist) => (
                   <tr key={playlists.indexOf(playlist)}>
                     <td>
-                      <Link className="text-white" to={"/home/profile/playlist"} state={playlist}>
+                      <Link
+                        className="text-white"
+                        to={"/home/profile/playlist"}
+                        state={playlist}
+                      >
                         {playlist.name}
                       </Link>
                     </td>

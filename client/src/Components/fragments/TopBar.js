@@ -30,6 +30,9 @@ export default function TopBar({ username, setAuth }) {
   const logout = async (e) => {
     e.preventDefault();
     try {
+      if (window.location.pathname != "/home") {
+        window.location = "/home";
+      }
       localStorage.removeItem("user");
       setAuth(false);
       navigate("/");

@@ -38,7 +38,6 @@ export default function AlbumSongs() {
     }
   };
 
-
   const padTo2Digits = (num) => {
     return num.toString().padStart(2, "0");
   };
@@ -72,6 +71,24 @@ export default function AlbumSongs() {
     }
   };
 
+  const playAllSongs = async () => {
+    const albumid = album.album_id;
+    try {
+      const body = { username, albumid };
+      const myHeaders = new Headers();
+      myHeaders.append("Content-type", "application/json");
+      const response = await fetch("http://localhost:5000/user/album/play", {
+        method: "POST",
+        headers: myHeaders,
+        body: JSON.stringify(body),
+      });
+      const jsonData = await response;
+      toast.success("Song data has been recorded");
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
   useEffect(() => {
     getSongs();
   }, []);
@@ -91,7 +108,9 @@ export default function AlbumSongs() {
         </div>
         <div className="bottom-playlist">
           <div className="container">
-            <Button className="btn btn-success mb-2">Play all Songs</Button>
+            <Button className="btn btn-success mb-2" onClick={playAllSongs}>
+              Play all Songs
+            </Button>
             <table border="1" frame="void" rules="rows">
               <thead>
                 <tr>
