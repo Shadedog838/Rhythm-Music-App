@@ -9,6 +9,7 @@ export default function CreatePlaylist() {
     try {
       const body = { name, username };
       const myHeaders = new Headers();
+      console.log(name);
       myHeaders.append("Content-type", "application/json");
       const response = await fetch(
         "http://localhost:5000/user/createplaylist",
@@ -18,6 +19,7 @@ export default function CreatePlaylist() {
           body: JSON.stringify(body),
         }
       );
+      const jsonData = await response;
       window.location = "/home/profile";
     } catch (err) {
       console.error(err.message);
@@ -31,7 +33,7 @@ export default function CreatePlaylist() {
           type="text"
           className="form-control"
           value={name}
-          onChange={(e) => setName(e.target.name)}
+          onChange={(e) => setName(e.target.value)}
         />
         <button className="btn btn-success">Create</button>
       </form>

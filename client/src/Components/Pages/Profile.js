@@ -5,16 +5,34 @@ import { Avatar } from "@material-ui/core";
 import { PlaylistPlay } from "@material-ui/icons";
 import CreatePlaylist from "../fragments/CreatePlaylist";
 import EditPlaylist from "../fragments/EditPlaylist";
+import Button from "react-bootstrap/Button";
+import { json, Link } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Profile() {
   const [username, setUsername] = useState(localStorage.getItem("user"));
   const [playlists, setPlaylists] = useState([]);
   const [followers, setFollowers] = useState([]);
   const [following, setFollowing] = useState([]);
+  const [attribute, setAttribute] = useState("");
+  const [users, setUsers] = useState([]);
 
   useEffect(() => {
     Grade(document.querySelectorAll(".gradient-wrap"));
   });
+
+  const padTo2Digits = (num) => {
+    return num.toString().padStart(2, "0");
+  };
+  const convertMsToMinuteSeconds = (milliseconds) => {
+    const minutes = Math.floor(milliseconds / 60000);
+    const seconds = Math.round((milliseconds % 60000) / 1000);
+
+    return seconds === 60
+      ? `${minutes + 1}:60`
+      : `${minutes}:${padTo2Digits(seconds)}`;
+  };
 
   const getPlaylist = async () => {
     try {
@@ -59,9 +77,9 @@ export default function Profile() {
         `http://localhost:5000/user/followers/${username}`
       );
       const jsonData = await response.json();
-      console.log(jsonData);
       if (jsonData.length != 0) {
         setFollowers(jsonData);
+        console.log(jsonData);
       }
     } catch (err) {
       console.error(err.message);
@@ -79,12 +97,75 @@ export default function Profile() {
         setFollowing(jsonData);
       }
     } catch (err) {
-      console.log(err.message);
+      console.error(err.message);
+    }
+  };
+
+  const getUsers = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(
+        `http://localhost:5000/user/usersearch/${attribute}`
+      );
+      const jsonData = await response.json();
+      console.log(jsonData);
+      if (jsonData.length !== 0) {
+        setUsers(jsonData);
+      }
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
+  const followUser = async (username1, username2, user) => {
+    if (following.filter(e => e.follows === username1).length > 0) {
+      toast.error("You already follow " + username1);
+    } else {
+      try {
+        const body = { username1, username2 };
+        const myHeaders = new Headers();
+        myHeaders.append("Content-type", "application/json");
+        const response = await fetch("http://localhost:5000/user/follow", {
+          method: "POST",
+          headers: myHeaders,
+          body: JSON.stringify(body),
+        });
+        const jsonData = await response;
+        toast.success("You are now following " + username2);
+        setTimeout(2000);
+        window.location = "/home/profile";
+      } catch (err) {
+        console.log("vsjvsloj")
+        toast.error("You already follow " + username2);
+        console.error(err.message);
+      }
+    }
+  };
+
+  const unFollow = async (username1, username2) => {
+    try {
+      const body = { username1, username2 };
+      const myHeaders = new Headers();
+      myHeaders.append("Content-type", "application/json");
+      const response = await fetch("http://localhost:5000/user/unfollow", {
+        method: "DELETE",
+        headers: myHeaders,
+        body: JSON.stringify(body),
+      });
+      const jsonData = await response;
+      setTimeout(2000);
+      window.location = "/home/profile";
+    } catch (err) {
+      console.error(err.message);
     }
   };
 
   useEffect(() => {
     getPlaylist();
+  }, []);
+
+  useEffect(() => {
+    getFollowing();
   }, []);
 
   useEffect(() => {
@@ -121,9 +202,13 @@ export default function Profile() {
               <tbody>
                 {playlists.map((playlist) => (
                   <tr key={playlists.indexOf(playlist)}>
-                    <td>{playlist.name}</td>
+                    <td>
+                      <Link className="text-decoration-none text-white" to={"/home/profile/playlist"} state={playlist}>
+                        {playlist.name}
+                      </Link>
+                    </td>
                     <td>{playlist.total_songs}</td>
-                    <td>{playlist.total_time}</td>
+                    <td>{convertMsToMinuteSeconds(playlist.total_time)}</td>
                     <td>
                       <EditPlaylist playlist={playlist} username={username} />
                     </td>
@@ -151,16 +236,78 @@ export default function Profile() {
                 </tr>
               </thead>
               <tbody>
-                {followers.map((follower) => {
+                {followers.map((follower) => (
                   <tr key={followers.indexOf(follower)}>
-                    <td>{follower.follows}</td>
-                  </tr>;
-                })}
+                    <td>{follower.followers}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="container mt-2">
+            <h3>Following</h3>
+            <table border="1" frame="void" rules="rows">
+              <thead>
+                <tr>
+                  <th>Following</th>
+                </tr>
+              </thead>
+              <tbody>
+                {following.map((follow) => (
+                  <tr key={following.indexOf(follow)}>
+                    <td>{follow.follows}</td>
+                    <td>
+                      <Button
+                        onClick={() => unFollow(follow.follows, username)}
+                        className="btn btn-success"
+                      >
+                        unfollow
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="container mt-2">
+            <h3>Search Users</h3>
+            <form className="d-flex mt-2 mb-3 w-50" onSubmit={getUsers}>
+              <input
+                type="text"
+                className="form-control"
+                onChange={(e) => setAttribute(e.target.value)}
+              />
+              <button className="btn btn-success">Find</button>
+            </form>
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Follow</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.map((user) => (
+                  <tr key={users.indexOf(user)}>
+                    <td>{user.username}</td>
+                    <td>
+                      <Button
+                        onClick={() =>
+                          followUser(user.username, username, user)
+                        }
+                        className="btn btn-success"
+                      >
+                        Follow
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
         </div>
       </div>
+      <ToastContainer />
     </Fragment>
   );
 }

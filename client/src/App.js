@@ -39,6 +39,7 @@ function App() {
             <Route path="/home/search" element={<Home />} />
             <Route path="/home/profile" element={<Home />} />
             <Route path="/home/albums" element={<Home />} />
+            <Route path="/home/profile/playlist" element={<Home />} />
             <Route
               exact
               path="/login"

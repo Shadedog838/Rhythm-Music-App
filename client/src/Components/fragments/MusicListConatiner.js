@@ -26,8 +26,8 @@ export default function MusicListConatiner() {
   const getSongs = async () => {
     try {
       const response = await fetch("http://localhost:5000/song");
-      const jsonDate = await response.json();
-      setSongs(jsonDate);
+      const jsonData = await response.json();
+      setSongs(jsonData);
     } catch (err) {
       console.error(err.message);
     }
@@ -130,7 +130,7 @@ export default function MusicListConatiner() {
       console.error(err.message);
     }
   };
-  
+
 
   useEffect(() => {
     getSongs();
@@ -140,7 +140,7 @@ export default function MusicListConatiner() {
     getPlaylist();
   }, []);
 
-  console.log(songs);
+  // console.log(songs);
   return (
     <>
       {songs.length !== 0 ? (

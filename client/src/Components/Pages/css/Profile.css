@@ -1,0 +1,41 @@
+.Profile {
+  display: flex;
+  flex-direction: column;
+}
+.Profile .top-profile {
+  z-index: 10;
+  background-color: rgb(32, 35, 36);
+  border-bottom: 1px solid gainsboro;
+  padding: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+}
+.Profile .top-profile .MuiAvatar-root {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+.Profile .top-profile .profile-detail {
+  padding: 10px;
+  margin: 10px;
+  background-color: rgb(32, 35, 36);
+  border-radius: 7px;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+.Profile .top-profile .profile-detail h3 {
+  font-weight: 600;
+  font-size: 4rem;
+}
+.Profile .top-profile .profile-detail p {
+  font-size: 1.1rem;
+  font-weight: lighter;
+  color: grey;
+}
+.Profile .bottom-profile {
+  padding: 10px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}/*# sourceMappingURL=Profile.css.map */

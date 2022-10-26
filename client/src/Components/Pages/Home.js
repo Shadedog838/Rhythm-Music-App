@@ -10,6 +10,7 @@ import SideBar from "../fragments/SideBar";
 import "../Pages/css/Home.scss";
 import Profile from "./Profile";
 import Album from "./Album";
+import PlaylistSongs from "./PlaylistSongs";
 
 const getCurrPage = (pathName) => {
   switch (pathName) {
@@ -21,6 +22,8 @@ const getCurrPage = (pathName) => {
       return <Profile />;
     case "/home/albums":
       return <Album />
+    case "/home/profile/playlist":
+      return <PlaylistSongs />
     default:
       return null;
   }
@@ -28,6 +31,7 @@ const getCurrPage = (pathName) => {
 
 export default function Home({ setAuth }) {
   const navigate = useNavigate();
+  const setauth = setAuth;
   const [page, setCurrPage] = useState(<MusicListConatiner />);
   const [username, setUsername] = useState("");
   let pathname = window.location.pathname;

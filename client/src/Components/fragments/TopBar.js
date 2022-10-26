@@ -7,7 +7,7 @@ import LogoIcon from "./Logo";
 import Button from "react-bootstrap/Button";
 import "../assets/scss/TopBar.scss";
 
-export default function TopBar({ username, setAuth}) {
+export default function TopBar({ username, setAuth }) {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState({});
   const [attribute, setAttribute] = useState("s.title");

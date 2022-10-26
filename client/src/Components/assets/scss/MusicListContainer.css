@@ -16,4 +16,8 @@ td, th {
   justify-content: flex-start;
   justify-content: space-evenly;
   width: 50%;
+}
+
+.pointer {
+  cursor: pointer;
 }/*# sourceMappingURL=MusicListContainer.css.map */
