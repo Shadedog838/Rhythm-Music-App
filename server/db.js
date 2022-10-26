@@ -84,6 +84,7 @@ pool.on('error', (err, client) => {
 
 pool.on('acquire', (client) => {
     console.log('Acquired new client.');
+    console.log(`[pool status] idle: ${pool.idleCount}, total: ${pool.totalCount}`)
 })
 
 pool.on('remove', (client) => {

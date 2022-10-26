@@ -99,7 +99,6 @@ router.post("/plays", async(req,res) => {
         res.status(500).send("Server Error");
     }
     if (client) client.release();
-    console.log(`idle: ${pool.idleCount}, total: ${pool.totalCount}`)
 });
 
 router.get("/albums", async (req, res) => {
