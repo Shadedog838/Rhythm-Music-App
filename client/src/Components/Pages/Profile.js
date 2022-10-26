@@ -9,6 +9,8 @@ import EditPlaylist from "../fragments/EditPlaylist";
 export default function Profile() {
   const [username, setUsername] = useState(localStorage.getItem("user"));
   const [playlists, setPlaylists] = useState([]);
+  const [followers, setFollowers] = useState([]);
+  const [following, setFollowing] = useState([]);
 
   useEffect(() => {
     Grade(document.querySelectorAll(".gradient-wrap"));
@@ -51,9 +53,22 @@ export default function Profile() {
     }
   };
 
+  const getFollowers = async() => {
+    try {
+
+    } catch (err) {
+      console.error(err.message);
+    }
+  }
+
   useEffect(() => {
     getPlaylist();
   }, []);
+
+  useEffect(() => {
+    getFollowers();
+  //   getFollowing();
+  }, [])
 
   return (
     <Fragment>
@@ -105,6 +120,10 @@ export default function Profile() {
                 ))}
               </tbody>
             </table>
+          </div>
+          <div className="container mt-2" >
+            <h3>Followers/Following</h3>
+
           </div>
         </div>
       </div>
