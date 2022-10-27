@@ -123,6 +123,7 @@ export default function AlbumSongs() {
       console.log(jsonData);
       toast.success("Song has been added to " + name);
     } catch (err) {
+      toast.error("Song is already in playlist");
       console.error(err.message);
     }
   };

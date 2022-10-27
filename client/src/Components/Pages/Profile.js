@@ -63,8 +63,11 @@ export default function Profile() {
         }
       );
       const jsonData = await response.json();
-      // window.location = "/home/profile";
-      getPlaylist();
+      if (playlists.length < 2) {
+        window.location.reload();
+      } else {
+        getPlaylist();
+      }
     } catch (err) {
       console.error(err.message);
     }
