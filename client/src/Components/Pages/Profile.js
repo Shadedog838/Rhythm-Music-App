@@ -136,6 +136,7 @@ export default function Profile() {
         toast.success("You are now following " + username1);
         setTimeout(2000);
         getFollowing();
+        getFollowers();
       } catch (err) {
         toast.error("You already follow " + username1);
         console.error(err.message);
@@ -160,6 +161,7 @@ export default function Profile() {
         window.location.reload();
       } else {
         getFollowing();
+        getFollowers();
       }
     } catch (err) {
       console.error(err.message);
