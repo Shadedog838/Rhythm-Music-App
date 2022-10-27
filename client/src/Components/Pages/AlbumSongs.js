@@ -158,6 +158,7 @@ export default function AlbumSongs() {
             <table border="1" frame="void" rules="rows">
               <thead>
                 <tr>
+                  <th>Track #</th>
                   <th>Title</th>
                   <th>Artist</th>
                   <th>Album</th>
@@ -169,6 +170,7 @@ export default function AlbumSongs() {
               <tbody>
                 {songs.map((song) => (
                   <tr key={songs.indexOf(song)}>
+                    <td>{song.track_number}</td>
                     <td>{song.title}</td>
                     <td>{song.artist_name}</td>
                     <td>{song.album_name}</td>
