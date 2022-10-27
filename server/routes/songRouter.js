@@ -116,7 +116,7 @@ router.get("/albums", async (req, res) => {
 // get all the songs and its info
 router.get("/album/:id", async(req,res)=>{
     const albumid = req.params.id
-    const query = `select al.albumid, al.name as album_name, a.name as artist_name, s.sid, s.title, s.length,s.releasedate
+    const query = `select al.albumid, al.name as album_name, a.name as artist_name, s.sid, s.title, s.length,s.releasedate, s.track_number
                     from album as al, artist as a, song as s
                     where al.albumid = s.albumid and al.albumid = $1 and al.artistid=a.artistid`
     pool.query(query,[albumid], (error, val)=>{
