@@ -259,7 +259,8 @@ router.post("/follow", async (req, res) => {
     const username2 = req.body.username2;
 
     const allNames = await pool.query(
-      "INSERT INTO follow(followid,followedbyid)VALUES ($1,$2)",
+      `INSERT INTO follow(followid,followedbyid) select $1,$2
+      EXCEPT SELECT followid, followedbyid from follow`,
       [username1, username2]
     );
     res.json(allNames.rows);
