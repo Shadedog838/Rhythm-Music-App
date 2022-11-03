@@ -158,6 +158,7 @@ export default function Search() {
                       <td>{song.times_played}</td>
                       <td>
                         <FontAwesomeIcon
+                          className="pointer"
                           onClick={() => playSong(song.sid)}
                           icon={solid("play-circle")}
                         />
