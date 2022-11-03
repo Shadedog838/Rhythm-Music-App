@@ -65,7 +65,7 @@ export default function PlaylistSongs() {
       const jsonData = await response.json();
       // console.log(jsonData);
       toast.success("Song data has been recorded");
-      setTimeout(2000);
+      setTimeout(5000);
       getSongs();
     } catch (err) {
       console.error(err.message);

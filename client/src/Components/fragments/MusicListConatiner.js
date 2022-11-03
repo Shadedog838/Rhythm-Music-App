@@ -102,7 +102,7 @@ export default function MusicListConatiner() {
       const jsonData = await response.json();
       // console.log(jsonData);
       toast.success("Song data has been recorded");
-      setTimeout(2000);
+      setTimeout(5000);
       handleSort();
     } catch (err) {
       console.error(err.message);
