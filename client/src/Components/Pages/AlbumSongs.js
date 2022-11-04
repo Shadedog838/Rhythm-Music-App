@@ -53,6 +53,7 @@ export default function AlbumSongs() {
   };
 
   const playSong = async (sid) => {
+    setTimeout(5000);
     const body = { username, sid };
     const myHeaders = new Headers();
     myHeaders.append("Content-type", "application/json");
@@ -65,7 +66,7 @@ export default function AlbumSongs() {
       const jsonData = await response.json();
       // console.log(jsonData);
       toast.success("Song data has been recorded");
-      setTimeout(5000);
+      setTimeout(2000);
       getSongs();
     } catch (err) {
       console.error(err.message);
