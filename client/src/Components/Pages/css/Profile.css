@@ -1,3 +1,4 @@
+@charset "UTF-8";
 .Profile {
   display: flex;
   flex-direction: column;
@@ -38,4 +39,28 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+}
+.Profile .collapsible {
+  background-color: rgb(32, 35, 36);
+  color: white;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+}
+.Profile .collapsible:after {
+  content: "+";
+  color: white;
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+.Profile .active, .Profile .collapsible:hover {
+  background-color: rgb(41, 40, 40);
+}
+.Profile .active:after {
+  content: "−";
 }/*# sourceMappingURL=Profile.css.map */

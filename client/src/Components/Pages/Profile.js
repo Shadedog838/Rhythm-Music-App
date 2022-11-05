@@ -2,12 +2,12 @@ import React, { Fragment, useEffect, useState } from "react";
 import "./css/Profile.scss";
 import Grade from "grade-js";
 import { Avatar } from "@material-ui/core";
-import { PlaylistPlay } from "@material-ui/icons";
 import CreatePlaylist from "../fragments/CreatePlaylist";
 import EditPlaylist from "../fragments/EditPlaylist";
 import Button from "react-bootstrap/Button";
-import { json, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import Collapse from "react-bootstrap/Collapse";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function Profile() {
@@ -17,7 +17,12 @@ export default function Profile() {
   const [following, setFollowing] = useState([]);
   const [attribute, setAttribute] = useState("");
   const [topArtists, setTopArtists] = useState([]);
+  const [topSongs, setTopSongs] = useState([]);
   const [users, setUsers] = useState([]);
+  const [openArtist, setOpenArtist] = useState(false);
+  const [openTopSongs, setOpenTopSongs] = useState(false);
+  const [openFollowers, setOpenFollowers] = useState(false);
+  const [openFollowing, setOpenFollowing] = useState(false);
 
   useEffect(() => {
     Grade(document.querySelectorAll(".gradient-wrap"));
@@ -165,33 +170,40 @@ export default function Profile() {
     }
   };
 
-  const getArtists = async() => {
+  const getArtists = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/user/topartists/${username}`);
+      const response = await fetch(
+        `http://localhost:5000/user/topartists/${username}`
+      );
       const jsonData = await response.json();
-      console.log(jsonData);
       if (jsonData.length != 0) {
         setTopArtists(jsonData);
       }
     } catch (err) {
-      console.error(err.message)
+      console.error(err.message);
     }
-  }
+  };
+
+  const getTopSongsFriends = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/user/topsongsfriends/${username}`
+      );
+      const jsonData = await response.json();
+      if (jsonData.length != 0) {
+        setTopSongs(jsonData);
+      }
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
 
   useEffect(() => {
     getArtists();
-  }, [])
-
-  useEffect(() => {
-    getPlaylist();
-  }, []);
-
-  useEffect(() => {
-    getFollowing();
-  }, []);
-
-  useEffect(() => {
     getFollowers();
+    getFollowing();
+    getPlaylist();
+    getTopSongsFriends();
   }, []);
 
   return (
@@ -209,25 +221,72 @@ export default function Profile() {
         </div>
         <div className="bottom-profile">
           <div className="container">
-            <h3>Your Top 10 Artists</h3>
-            <table border="1" frame="void" rules="rows">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Artist</th>
-                  <th>Listen #</th>
-                </tr>
-              </thead>
-              <tbody>
-                {topArtists.map((artist) => (
-                  <tr key={topArtists.indexOf(artist)}>
-                    <td>{topArtists.indexOf(artist) + 1}</td>
-                    <td>{artist.name}</td>
-                    <td>{artist.play}</td>
+            <Button
+              className="collapsible"
+              id="artists"
+              onClick={() => {
+                let elem = document.getElementById("artists");
+                elem.classList.toggle("active");
+                setOpenArtist(!openArtist);
+              }}
+              aria-expanded={openArtist}
+            >
+              Your Top 10 Artists
+            </Button>
+            <Collapse in={openArtist}>
+              <table border="1" frame="void" rules="rows">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Artist</th>
+                    <th>Listen #</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {topArtists.map((artist) => (
+                    <tr key={topArtists.indexOf(artist)}>
+                      <td>{topArtists.indexOf(artist) + 1}</td>
+                      <td>{artist.name}</td>
+                      <td>{artist.play}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </Collapse>
+          </div>
+          <div className="container mt-3">
+            <Button
+              className="collapsible"
+              id="songs"
+              onClick={() => {
+                let elem = document.getElementById("songs");
+                elem.classList.toggle("active");
+                setOpenTopSongs(!openTopSongs);
+              }}
+              aria-expanded={openTopSongs}
+            >
+              Top 50 Songs Among Your Friends
+            </Button>
+            <Collapse in={openTopSongs}>
+              <table border="1" frame="void" rules="rows">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Title</th>
+                    <th>Listen #</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {topSongs.map((song) => (
+                    <tr key={topSongs.indexOf(song)}>
+                      <td>{topSongs.indexOf(song) + 1}</td>
+                      <td>{song.title}</td>
+                      <td>{song.play}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </Collapse>
           </div>
           <div className="container mt-3">
             <h3>Playlist</h3>
@@ -275,46 +334,72 @@ export default function Profile() {
             </table>
           </div>
           <div className="container mt-3">
-            <h3>Followers</h3>
-            <table border="1" frame="void" rules="rows">
-              <thead>
-                <tr>
-                  <th>Followers</th>
-                </tr>
-              </thead>
-              <tbody>
-                {followers.map((follower) => (
-                  <tr key={followers.indexOf(follower)}>
-                    <td>{follower.followers}</td>
+            <Button
+              className="collapsible"
+              id="followers"
+              onClick={() => {
+                let elem = document.getElementById("followers");
+                elem.classList.toggle("active");
+                setOpenFollowers(!openFollowers);
+              }}
+              aria-expanded={openFollowers}
+            >
+              Followers
+            </Button>
+            <Collapse in={openFollowers}>
+              <table border="1" frame="void" rules="rows">
+                <thead>
+                  <tr>
+                    <th>Followers</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {followers.map((follower) => (
+                    <tr key={followers.indexOf(follower)}>
+                      <td>{follower.followers}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </Collapse>
           </div>
           <div className="container mt-3">
-            <h3>Following</h3>
-            <table border="1" frame="void" rules="rows">
-              <thead>
-                <tr>
-                  <th>Following</th>
-                </tr>
-              </thead>
-              <tbody>
-                {following.map((follow) => (
-                  <tr key={following.indexOf(follow)}>
-                    <td>{follow.follows}</td>
-                    <td>
-                      <Button
-                        onClick={() => unFollow(follow.follows, username)}
-                        className="btn btn-success"
-                      >
-                        unfollow
-                      </Button>
-                    </td>
+            <Button
+              className="collapsible"
+              id="following"
+              onClick={() => {
+                let elem = document.getElementById("following");
+                elem.classList.toggle("active");
+                setOpenFollowing(!openFollowing);
+              }}
+              aria-expanded={openFollowing}
+            >
+              Following
+            </Button>
+            <Collapse in={openFollowing}>
+              <table border="1" frame="void" rules="rows">
+                <thead>
+                  <tr>
+                    <th>Following</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {following.map((follow) => (
+                    <tr key={following.indexOf(follow)}>
+                      <td>{follow.follows}</td>
+                      <td>
+                        <Button
+                          onClick={() => unFollow(follow.follows, username)}
+                          className="btn btn-success"
+                        >
+                          unfollow
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </Collapse>
           </div>
           <div className="container mt-3">
             <h3>Search Users</h3>
