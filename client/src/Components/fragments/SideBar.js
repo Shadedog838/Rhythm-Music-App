@@ -4,6 +4,7 @@ import SideBarOptions from "./SideBarOptions";
 import AlbumIcon from "@material-ui/icons/Album";
 import PersonIcon from '@material-ui/icons/Person';
 import HomeIcon from '@material-ui/icons/Home';
+import PollIcon from '@material-ui/icons/Poll';
 import "../assets/scss/SideBar.scss";
 
 export default function SideBar() {
@@ -31,6 +32,12 @@ export default function SideBar() {
           Icon={PersonIcon}
           href={"/home/profile"}
           title={"Profile"}
+        />
+        <SideBarOptions
+          className="nav-sub"
+          Icon={PollIcon}
+          href={"/home/billboard"}
+          title={"Billboard"}
         />
       </div>
     </aside>

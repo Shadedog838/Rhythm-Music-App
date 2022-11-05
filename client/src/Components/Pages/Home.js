@@ -12,6 +12,7 @@ import Profile from "./Profile";
 import Album from "./Album";
 import PlaylistSongs from "./PlaylistSongs";
 import AlbumSongs from "./AlbumSongs";
+import Billboard from "./Billboard";
 
 const getCurrPage = (pathName) => {
   switch (pathName) {
@@ -27,6 +28,8 @@ const getCurrPage = (pathName) => {
       return <PlaylistSongs />
     case "/home/album/songs":
       return <AlbumSongs />
+    case "/home/billboard":
+      return <Billboard />
     default:
       return null;
   }
