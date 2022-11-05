@@ -141,6 +141,20 @@ router.get("/topsongs30", async (req,res) => {
     }
   });
 
+  //top 5 genre of this month
+router.get("/topgenre5", async (req,res) => {
+    try{
+      const allNames = await pool.query(
+        `SELECT  g.name, count(p.sid) as play FROM song as s, plays as p, genre as g
+        WHERE s.sid = p.sid AND g.genreid = s.genre_id  AND extract(MONTH  FROM now())  = extract(MONTH FROM p.datetimeplayed)
+        AND extract(Year  FROM now())  = extract(Year FROM p.datetimeplayed)
+        GROUP BY (g.name) ORDER BY (play) DESC LIMIT 5`
+      );
+      res.json(allNames.rows);
+    } catch(err){
+      console.log(err.message);
+    }
+  });
 
 module.exports = router;
 // ================= //
