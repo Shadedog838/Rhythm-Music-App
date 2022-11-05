@@ -460,4 +460,18 @@ router.get("/topartists/:username", async (req,res) => {
 });
 
 
+//top songs of friends
+router.get("/topsongsfriends/:username", async (req,res) => {
+  try{
+    const attribute = req.params.username;
+    const allNames = await pool.query(
+      `SELECT  s.sid, count(p.sid) as play FROM song as s, plays as p, follow as f
+      WHERE s.sid = p.sid AND f.followedbyid = $1 AND p.username = f.followid  GROUP BY(s.sid) ORDER BY (play) DESC LIMIT 50`,[attribute]
+    );
+    res.json(allNames.rows);
+  } catch(err){
+    console.log(err.message);
+  }
+});
+
 module.exports = router;
