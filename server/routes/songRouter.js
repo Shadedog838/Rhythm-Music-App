@@ -126,7 +126,20 @@ router.get("/album/:id", async(req,res)=>{
         }
         res.status(200).json(val.rows)
     })
-})
+});
+
+//top songs of last 30 days
+router.get("/topsongs30", async (req,res) => {
+    try{
+      const allNames = await pool.query(
+        `SELECT  s.sid, count(p.sid) as play FROM song as s, plays as p 
+        WHERE s.sid = p.sid AND p.datetimeplayed BETWEEN now()- interval '30 day' AND now() GROUP BY(s.sid) ORDER BY (play) DESC LIMIT 50`
+      );
+      res.json(allNames.rows);
+    } catch(err){
+      console.log(err.message);
+    }
+  });
 
 
 module.exports = router;
