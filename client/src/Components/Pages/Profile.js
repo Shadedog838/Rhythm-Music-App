@@ -6,7 +6,7 @@ import { PlaylistPlay } from "@material-ui/icons";
 import CreatePlaylist from "../fragments/CreatePlaylist";
 import EditPlaylist from "../fragments/EditPlaylist";
 import Button from "react-bootstrap/Button";
-import { Link } from "react-router-dom";
+import { json, Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -16,6 +16,7 @@ export default function Profile() {
   const [followers, setFollowers] = useState([]);
   const [following, setFollowing] = useState([]);
   const [attribute, setAttribute] = useState("");
+  const [topArtists, setTopArtists] = useState([]);
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
@@ -40,7 +41,6 @@ export default function Profile() {
         `http://localhost:5000/user/playlists/${username}`
       );
       const jsonData = await response.json();
-      console.log(jsonData);
       if (jsonData.length != 0) {
         setPlaylists(jsonData);
       }
@@ -81,7 +81,6 @@ export default function Profile() {
       const jsonData = await response.json();
       if (jsonData.length != 0) {
         setFollowers(jsonData);
-        console.log(jsonData);
       }
     } catch (err) {
       console.error(err.message);
@@ -94,7 +93,6 @@ export default function Profile() {
         `http://localhost:5000/user/followedby/${username}`
       );
       const jsonData = await response.json();
-      console.log(jsonData);
       if (jsonData.length != 0) {
         setFollowing(jsonData);
       }
@@ -110,7 +108,6 @@ export default function Profile() {
         `http://localhost:5000/user/usersearch/${attribute}`
       );
       const jsonData = await response.json();
-      console.log(jsonData);
       if (jsonData.length !== 0) {
         setUsers(jsonData);
       }
@@ -168,6 +165,23 @@ export default function Profile() {
     }
   };
 
+  const getArtists = async() => {
+    try {
+      const response = await fetch(`http://localhost:5000/user/topartists/${username}`);
+      const jsonData = await response.json();
+      console.log(jsonData);
+      if (jsonData.length != 0) {
+        setTopArtists(jsonData);
+      }
+    } catch (err) {
+      console.error(err.message)
+    }
+  }
+
+  useEffect(() => {
+    getArtists();
+  }, [])
+
   useEffect(() => {
     getPlaylist();
   }, []);
@@ -195,6 +209,27 @@ export default function Profile() {
         </div>
         <div className="bottom-profile">
           <div className="container">
+            <h3>Your Top 10 Artists</h3>
+            <table border="1" frame="void" rules="rows">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Artist</th>
+                  <th>Listen #</th>
+                </tr>
+              </thead>
+              <tbody>
+                {topArtists.map((artist) => (
+                  <tr key={topArtists.indexOf(artist)}>
+                    <td>{topArtists.indexOf(artist) + 1}</td>
+                    <td>{artist.name}</td>
+                    <td>{artist.play}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="container mt-3">
             <h3>Playlist</h3>
             <CreatePlaylist />
             <table border="1" frame="void" rules="rows">
@@ -239,7 +274,7 @@ export default function Profile() {
               </tbody>
             </table>
           </div>
-          <div className="container mt-2">
+          <div className="container mt-3">
             <h3>Followers</h3>
             <table border="1" frame="void" rules="rows">
               <thead>
@@ -256,7 +291,7 @@ export default function Profile() {
               </tbody>
             </table>
           </div>
-          <div className="container mt-2">
+          <div className="container mt-3">
             <h3>Following</h3>
             <table border="1" frame="void" rules="rows">
               <thead>
@@ -281,7 +316,7 @@ export default function Profile() {
               </tbody>
             </table>
           </div>
-          <div className="container mt-2">
+          <div className="container mt-3">
             <h3>Search Users</h3>
             <form className="d-flex mt-2 mb-3 w-50" onSubmit={getUsers}>
               <input
