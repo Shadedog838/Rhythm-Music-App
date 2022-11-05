@@ -56,7 +56,10 @@ export default function Billboard() {
                       {songs.indexOf(song) + 1}
                     </td>
                     <td>
-                      {songs}
+                      {song.title}
+                    </td>
+                    <td>
+                      {song.play}
                     </td>
                   </tr>
                 ))}
