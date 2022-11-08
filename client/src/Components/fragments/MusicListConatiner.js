@@ -132,7 +132,6 @@ export default function MusicListConatiner() {
     }
   };
 
-
   useEffect(() => {
     getSongs();
   }, []);
@@ -218,7 +217,11 @@ export default function MusicListConatiner() {
                             {playlists.map((playlist) => (
                               <Dropdown.Item
                                 onClick={() =>
-                                  addToPlaylist(playlist.pid, song.sid, playlist.name)
+                                  addToPlaylist(
+                                    playlist.pid,
+                                    song.sid,
+                                    playlist.name
+                                  )
                                 }
                                 key={playlists.indexOf(playlist)}
                               >
@@ -232,14 +235,18 @@ export default function MusicListConatiner() {
                   ))}
               </tbody>
             </table>
-            <div className="text-center">
-              <Button
-                className="btn btn-success btn-block w-25 mt-3 mb-3"
-                onClick={loadMore}
-              >
-                Load More
-              </Button>
-            </div>
+            {songs.length > limit ? (
+              <div className="text-center">
+                <Button
+                  className="btn btn-success btn-block w-25 mt-3 mb-3"
+                  onClick={loadMore}
+                >
+                  Load More
+                </Button>
+              </div>
+            ) : (
+              <></>
+            )}
           </Fragment>
         </div>
       ) : (

@@ -15,7 +15,7 @@ export default function Billboard() {
       const response = await fetch("http://localhost:5000/song/topsongs30");
       const jsonData = await response.json();
       console.log(jsonData);
-      if (jsonData.length != 0) {
+      if (jsonData.length !== 0) {
         setSongs(jsonData);
       }
     } catch (err) {
@@ -28,7 +28,7 @@ export default function Billboard() {
       const response = await fetch("http://localhost:5000/song/topgenre5");
       const jsonData = await response.json();
       console.log(jsonData);
-      if (jsonData.length != 0) {
+      if (jsonData.length !== 0) {
         setGenres(jsonData);
       }
     } catch (err) {
@@ -81,14 +81,18 @@ export default function Billboard() {
                   ))}
               </tbody>
             </table>
-            <div className="text-center">
-              <Button
-                className="btn btn-success btn-block w-25 mt-3 mb-3"
-                onClick={loadMore}
-              >
-                Load More
-              </Button>
-            </div>
+            {songs.length > limit ? (
+              <div className="text-center">
+                <Button
+                  className="btn btn-success btn-block w-25 mt-3 mb-3"
+                  onClick={loadMore}
+                >
+                  Load More
+                </Button>
+              </div>
+            ) : (
+              <></>
+            )}
           </div>
           <div className="container mt-3">
             <h3>Top 5 Most Popular Genres</h3>

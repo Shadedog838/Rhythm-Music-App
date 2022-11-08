@@ -194,14 +194,18 @@ export default function Search() {
                   ))}
               </tbody>
             </table>
-            <div className="text-center">
-              <Button
-                className="btn btn-success btn-block w-25 mt-3 mb-3"
-                onClick={loadMore}
-              >
-                Load More
-              </Button>
-            </div>
+            {
+              songs.length > limit ? (
+                <div className="text-center">
+                <Button
+                  className="btn btn-success btn-block w-25 mt-3 mb-3"
+                  onClick={loadMore}
+                >
+                  Load More
+                </Button>
+              </div>
+              ) : (<></>)
+            }
           </Fragment>
         </div>
       ) : (

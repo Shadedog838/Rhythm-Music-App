@@ -125,14 +125,18 @@ export default function Album() {
                 ))}
             </tbody>
           </table>
-          <div className="text-center">
-            <Button
-              className="btn btn-success btn-block w-25 mt-3 mb-3"
-              onClick={loadMore}
-            >
-              Load More
-            </Button>
-          </div>
+          {
+              albums.length > limit ? (
+                <div className="text-center">
+                <Button
+                  className="btn btn-success btn-block w-25 mt-3 mb-3"
+                  onClick={loadMore}
+                >
+                  Load More
+                </Button>
+              </div>
+              ) : (<></>)
+            }
         </Fragment>
       ) : (
         <h2>No result to display</h2>
