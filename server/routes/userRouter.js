@@ -19,6 +19,7 @@
     * get all followers
     * get all users a specific user follows
     * top artists of a user
+    * reccomendation
 */
 const express = require("express");
 const router = express.Router();
@@ -473,5 +474,37 @@ router.get("/topsongsfriends/:username", async (req,res) => {
     console.log(err.message);
   }
 });
+
+//recommendation querry
+router.get("/recommendation/:username", async (req,res) => {
+  try{
+    const attribute = req.params.username;
+    const allNames = await pool.query(
+      `select s.title, a.name from(
+        select distinct sid from ((
+            select username, genreid from top_genre
+            where genreid = (
+                select genreid from top_genre where username = $1
+            ) and username != $1
+        ) as a
+        inner join (
+            select username, plays.sid as sid, genre_id from plays
+            inner join song
+            on plays.sid = plays.sid
+        ) as b
+        on a.username = b.username and a.genreid = b.genre_id)
+        except (
+            select sid from playlist_contains as pc
+            inner join playlist as p
+            on pc.pid = p.pid
+            where username = $1
+        )) as songid, song as s, artist as a where s.sid = songid.sid and s.artistid = a.artistid;`,[attribute]
+    );
+    res.json(allNames.rows);
+  } catch(err){
+    console.log(err.message);
+  }
+});
+
 
 module.exports = router;
