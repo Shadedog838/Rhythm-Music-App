@@ -451,7 +451,7 @@ router.get("/topartists/:username", async (req,res) => {
   try{
     const attribute = req.params.username;
     const allNames = await pool.query(
-      `SELECT a.name, COUNT(p.sid) as play FROM song as s, plays as p, artist as a 
+      `SELECT a.name, COUNT(p.sid) as play FROM song as s, plays as p, artist as a
       WHERE p.username = $1 AND p.sid = s.sid AND s.artistid =a.artistid GROUP BY (a.name) ORDER BY play DESC LIMIT 10`,[attribute]
     );
     res.json(allNames.rows);
@@ -480,7 +480,7 @@ router.get("/recommendation/:username", async (req,res) => {
   try{
     const attribute = req.params.username;
     const allNames = await pool.query(
-      `select s.title, a.name from(
+      `select s.sid, s.title, a.name from(
         select distinct sid from ((
             select username, genreid from top_genre
             where genreid = (
