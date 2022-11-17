@@ -289,7 +289,7 @@ export default function Profile() {
             </Collapse>
           </div>
           <div className="container mt-3">
-            <h3>Playlist</h3>
+            <h3>Playlist ({playlists.length})</h3>
             <CreatePlaylist />
             <table border="1" frame="void" rules="rows">
               <thead>
@@ -344,13 +344,13 @@ export default function Profile() {
               }}
               aria-expanded={openFollowers}
             >
-              Followers
+              Followers ({followers.length})
             </Button>
             <Collapse in={openFollowers}>
               <table border="1" frame="void" rules="rows">
                 <thead>
                   <tr>
-                    <th>Followers</th>
+                    <th>Followers ({followers.length})</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -374,13 +374,13 @@ export default function Profile() {
               }}
               aria-expanded={openFollowing}
             >
-              Following
+              Following ({following.length})
             </Button>
             <Collapse in={openFollowing}>
               <table border="1" frame="void" rules="rows">
                 <thead>
                   <tr>
-                    <th>Following</th>
+                    <th>Following ({following.length})</th>
                   </tr>
                 </thead>
                 <tbody>
